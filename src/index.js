@@ -1,12 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const cors = require('cors')
+
 
 const Game = require('./models/game')
 
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
 
 var mongoDB = 'mongodb://localhost/origami';
 mongoose.connect(mongoDB, { useNewUrlParser: true });
