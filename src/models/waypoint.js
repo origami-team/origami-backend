@@ -1,13 +1,32 @@
 // Define schema
 const mongoose = require('mongoose')
+const taskSchema = require('./task');
 
-var Schema = mongoose.Schema;
 
-var waypointSchema = new Schema({
-    name: String,
-    description: String,
-    lat: { type: Number, min: -90, max: 90 },
-    lng: { type: Number, min: -180, max: 180 },
+const Schema = mongoose.Schema;
+
+const waypointSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    lat: {
+        type: Number,
+        min: -90,
+        max: 90,
+        required: true
+    },
+    lng: {
+        type: Number,
+        min: -180,
+        max: 180,
+        required: true
+    },
+    tasks: [taskSchema]
 });
 
 // Compile model from schema
