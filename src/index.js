@@ -23,7 +23,11 @@ morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
 // setup the logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :body ":referrer" ":user-agent"', { stream: accessLogStream }))
 
-const mongoDB = 'mongodb://localhost/origami';
+const mongoHost = process.env.NODE_ENV == 'production' ? 'mongo' : 'localhost'
+const mongoDB = `mongodb://${mongoHost}/origami`;
+
+console.log(mongoDB)
+
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 
 //Get the default connection
