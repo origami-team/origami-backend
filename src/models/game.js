@@ -7,24 +7,19 @@ const Schema = mongoose.Schema;
 
 const gameSchema = new Schema({
 
-    name: {
-        type: String,
+    id: {
+        type: Number,
         required: true
     },
-    description: {
+    name: {
         type: String,
         required: true,
     },
-    type: {
-        type: String,
+    tasks: {
+        type: Array,
         required: true
     },
-    author: String,
-    timeLimit: {
-        type: Number,
-        min: 0, max: 300
-    },
-    waypoints: [waypoint],
+    tracking: Boolean,
     createdAt: {
         type: Date,
         default: Date.now
@@ -40,13 +35,10 @@ gameSchema.initNew = function (params) {
     const Game = mongoose.model('Game', gameSchema);
 
     return Game.create({
+        id: params.id,
         name: params.name,
-        type: params.type,
-        description: params.description,
-        timecompl: params.timecompl,
-        difficulty: params.difficulty,
-        private: params.private,
-        waypoints: params.waypoints
+        tasks: params.tasks,
+        tracking: params.tracking,
     });
 };
 

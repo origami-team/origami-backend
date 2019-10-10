@@ -3,23 +3,31 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const morgan = require('morgan')
-
-
-
+const path = require('path')
+const rfs = require('rotating-file-stream')
 
 const gameSchema = require('./models/game')
 
-var app = express();
+const accessLogStream = rfs('access.log', {
+    interval: '1d', // rotate daily
+    path: path.join(__dirname, '..', 'log')
+})
+
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
-app.use(morgan('combined'))
 
-var mongoDB = 'mongodb://localhost/origami';
+morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
+
+// setup the logger
+app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :body ":referrer" ":user-agent"', { stream: accessLogStream }))
+
+const mongoDB = 'mongodb://localhost/origami';
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 
 //Get the default connection
-var db = mongoose.connection;
+const db = mongoose.connection;
 
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -33,14 +41,24 @@ app.get('/games', (req, res) => {
     })
 })
 
+app.get('/game/:id', (req, res) => {
+    const Game = mongoose.model('Game', gameSchema);
+
+    Game.find({ _id: req.params.id }).exec((err, games) => {
+        if (err) res.status(500).send(err)
+        res.send(games)
+    })
+})
+
 app.post('/game', (req, res) => {
     gameSchema
         .initNew(req.body)
         .then(savedGame => {
-            res.send(`🎉 successfully saved ${savedGame.name}`)
+            res.status(200).send(`🎉 successfully saved ${savedGame.name}`)
         }).catch(err => res.status(500).send(err))
 })
 
-app.listen(3000, () => {
+
+app.listen(3000, '0.0.0.0', () => {
     console.log("Listening at :3000...");
 });
