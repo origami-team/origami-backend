@@ -5,6 +5,10 @@ const cors = require('cors')
 const morgan = require('morgan')
 const path = require('path')
 const rfs = require('rotating-file-stream')
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+const compression = require('compression');
 
 const gameSchema = require('./models/game')
 
@@ -14,9 +18,25 @@ const accessLogStream = rfs('access.log', {
 })
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(__dirname, {dotfiles: 'allow'}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors())
+app.use(compression())
+
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/api.origami.felixerdmann.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/api.origami.felixerdmann.com/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/api.origami.felixerdmann.com/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+
+
+
 
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
 
@@ -58,11 +78,24 @@ app.post('/game', (req, res) => {
     gameSchema
         .initNew(req.body)
         .then(savedGame => {
-            res.status(200).send(`🎉 successfully saved ${savedGame.name}`)
+            res.status(200).send(savedGame)
         }).catch(err => res.status(500).send(err))
 })
 
-
-app.listen(3000, '0.0.0.0', () => {
+/*
+app.listen(80, '0.0.0.0', () => {
     console.log("Listening at :3000...");
+});
+*/
+
+// Starting both http & https servers
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(80, () => {
+	console.log('HTTP Server running on port 80');
+});
+
+httpsServer.listen(443, () => {
+	console.log('HTTPS Server running on port 443');
 });
