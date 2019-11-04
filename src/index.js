@@ -53,10 +53,19 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 app.get("/games", (req, res) => {
   const Game = mongoose.model("Game", gameSchema);
 
-  Game.find().exec((err, games) => {
-    if (err) res.status(500).send(err);
-    res.send(games);
-  });
+  if (req.query.minimal == "true") {
+    Game.find()
+      .select("name")
+      .exec((err, games) => {
+        if (err) res.status(500).send(err);
+        res.send(games);
+      });
+  } else {
+    Game.find().exec((err, games) => {
+      if (err) res.status(500).send(err);
+      res.send(games);
+    });
+  }
 });
 
 app.get("/game/:id", (req, res) => {
