@@ -1,24 +1,26 @@
 // Define schema
 const mongoose = require("mongoose");
 
-const waypoint = require("./waypoint");
-
 const Schema = mongoose.Schema;
 
-const gameSchema = new Schema({
+const trackSchema = new Schema({
   id: {
     type: Number,
     required: true
   },
-  name: {
+  game: {
     type: String,
     required: true
   },
-  tasks: {
-    type: Array,
-    required: true
+  waypoints: {
+    type: Array
   },
-  tracking: Boolean,
+  events: {
+    type: Array
+  },
+  answers: {
+    type: Array
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -28,16 +30,16 @@ const gameSchema = new Schema({
     default: Date.now
   }
 });
-
-gameSchema.initNew = function(params) {
+trackSchema.initNew = function(params) {
   // create game document and persist in database
-  const Game = mongoose.model("Game", gameSchema);
+  const Track = mongoose.model("Track", trackSchema);
 
-  return Game.create({
+  return Track.create({
     id: params.id,
-    name: params.name,
-    tasks: params.tasks,
-    tracking: params.tracking
+    game: params.game,
+    waypoints: params.waypoints,
+    events: params.events,
+    answers: params.answers
   });
 };
 
