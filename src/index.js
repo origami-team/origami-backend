@@ -25,28 +25,6 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use(compression());
 
-if (process.env.NODE_ENV == "production") {
-  // Certificate
-  const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/privkey.pem",
-    "utf8"
-  );
-  const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/cert.pem",
-    "utf8"
-  );
-  const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/chain.pem",
-    "utf8"
-  );
-
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca
-  };
-}
-
 morgan.token("body", function(req, res) {
   return JSON.stringify(req.body);
 });
@@ -133,6 +111,26 @@ httpServer.listen(80, () => {
 });
 
 if (process.env.NODE_ENV == "production") {
+  // Certificate
+  const privateKey = fs.readFileSync(
+    "/etc/letsencrypt/live/api.origami.felixerdmann.com/privkey.pem",
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    "/etc/letsencrypt/live/api.origami.felixerdmann.com/cert.pem",
+    "utf8"
+  );
+  const ca = fs.readFileSync(
+    "/etc/letsencrypt/live/api.origami.felixerdmann.com/chain.pem",
+    "utf8"
+  );
+
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+  };
+
   const httpsServer = https.createServer(credentials, app);
 
   httpsServer.listen(443, () => {
