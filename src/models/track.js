@@ -4,13 +4,12 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const trackSchema = new Schema({
-  id: {
-    type: Number,
-    required: true
-  },
   game: {
     type: String,
     required: true
+  },
+  device: {
+    type: Schema.Types.Mixed
   },
   waypoints: {
     type: Array
@@ -37,6 +36,7 @@ trackSchema.initNew = function(params) {
   return Track.create({
     id: params.id,
     game: params.game,
+    device: params.device,
     waypoints: params.waypoints,
     events: params.events,
     answers: params.answers
