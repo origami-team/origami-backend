@@ -43,4 +43,4 @@ trackSchema.initNew = function(params) {
   });
 };
 
-module.exports = gameSchema;
+module.exports = trackSchema;
