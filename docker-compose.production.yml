@@ -7,9 +7,13 @@ services:
       - 443:443
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
+      - ./log:/app/log
+    restart: always
     links: 
       - mongo
     environment:
       - NODE_ENV=production
   mongo:
     image: mongo
+    volumes:
+      - /home/ubuntu/origami-backend/db:/data/db
