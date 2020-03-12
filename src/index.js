@@ -9,6 +9,10 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const compression = require("compression");
+var gridfs = require('gridfs-stream');
+
+
+const uploadController = require("./controllers/upload");
 
 const gameSchema = require("./models/game");
 const trackSchema = require("./models/track");
@@ -25,7 +29,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use(compression());
 
-morgan.token("body", function(req, res) {
+morgan.token("body", function (req, res) {
   return JSON.stringify(req.body);
 });
 
@@ -42,13 +46,16 @@ const mongoDB = `mongodb://${mongoHost}/origami`;
 
 console.log(mongoDB);
 
+
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 
 //Get the default connection
 const db = mongoose.connection;
 
+
 //Bind connection to error event (to get notification of connection errors)
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
 
 app.get("/games", (req, res) => {
   const Game = mongoose.model("Game", gameSchema);
@@ -113,10 +120,51 @@ app.post("/track", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
+app.post("/upload", uploadController.uploadFile);
+
+app.get('/file/:file', (req, res) => {
+  var gridfsbucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: 'photos'
+  });
+
+  gridfsbucket.find({filename: req.params.file}).hasNext().then(() => {
+    gridfsbucket.openDownloadStreamByName(req.params.file)
+      .on('error', (err) => res.status(404).json(err))
+      .pipe(res)
+      .on('error', () => {
+        console.log("Some error occurred in download:" + error);
+        res.json(error);
+      })
+  }).catch(err => res.json(err))
+
+});
+
+  // const GridFSBucket = db.GridFSBucket;
+
+  // const gfs = new GridFSBucket(db, {bucketName: 'photos'});
+
+  // // Check if file
+  // if (!file || file.length === 0) {
+  //   return res.status(404).json({
+  //     err: 'No file exists',
+  //   })
+  // }
+
+  // // Check if image
+  // if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+  //   // Read output to browser
+  //   const readstream = gfs.createReadStream(file.filename)
+  //   readstream.pipe(res)
+  // } else {
+  //   res.status(404).json({
+  //     err: 'Not an image',
+  //   })
+  // }
+
 // Starting both http & https servers
 const httpServer = http.createServer(app);
-httpServer.listen(80, () => {
-  console.log("HTTP Server running on port 80");
+httpServer.listen(3000, () => {
+  console.log("HTTP Server running on port 3000");
 });
 
 if (process.env.NODE_ENV == "production") {

@@ -7,9 +7,9 @@ services:
       - 443:443
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-    links: 
+    links:
       - mongo
   mongo:
     image: mongo
-    ports: 
+    ports:
       - 27017:27017
