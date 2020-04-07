@@ -30,11 +30,19 @@ gameSchema.initNew = function(params) {
   const Game = mongoose.model("Game", gameSchema);
 
   return Game.create({
-    id: params.id,
     name: params.name,
     tasks: params.tasks,
     tracking: params.tracking
   });
+};
+
+gameSchema.update = async function(params) {
+  // create game document and persist in database
+  const Game = mongoose.model("Game", gameSchema);
+
+  const gameToUpdate = await Game.findOne({_id: params._id});
+
+  return gameToUpdate.updateOne({...params, updatedAt: Date.now()})
 };
 
 module.exports = gameSchema;

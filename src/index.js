@@ -93,6 +93,15 @@ app.post("/game", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
+app.put("/game", (req, res) => {
+  gameSchema
+    .update(req.body)
+    .then(savedGame => {
+      res.status(200).send(savedGame);
+    })
+    .catch(err => res.status(500).send(err));
+});
+
 app.get("/tracks", (req, res) => {
   const Track = mongoose.model("Track", trackSchema);
 
