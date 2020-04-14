@@ -8,6 +8,9 @@ const trackSchema = new Schema({
     type: String,
     required: true
   },
+  name: {
+    type: String,
+  },
   device: {
     type: Schema.Types.Mixed
   },
@@ -36,6 +39,7 @@ trackSchema.initNew = function(params) {
   return Track.create({
     id: params.id,
     game: params.game,
+    name: params.name,
     device: params.device,
     waypoints: params.waypoints,
     events: params.events,
