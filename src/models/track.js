@@ -11,6 +11,12 @@ const trackSchema = new Schema({
   name: {
     type: String,
   },
+  start: {
+    type: Date
+  },
+  end: {
+    type: Date
+  },
   device: {
     type: Schema.Types.Mixed
   },
@@ -40,6 +46,8 @@ trackSchema.initNew = function(params) {
     id: params.id,
     game: params.game,
     name: params.name,
+    start: params.start,
+    end: params.end,
     device: params.device,
     waypoints: params.waypoints,
     events: params.events,
