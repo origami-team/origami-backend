@@ -29,6 +29,12 @@ const trackSchema = new Schema({
   answers: {
     type: Array
   },
+  players: {
+    type: Array
+  },
+  playersCount: {
+    type: Number
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -51,7 +57,9 @@ trackSchema.initNew = function(params) {
     device: params.device,
     waypoints: params.waypoints,
     events: params.events,
-    answers: params.answers
+    answers: params.answers,
+    players: params.players,
+    playersCount: params.playersCount
   });
 };
 
