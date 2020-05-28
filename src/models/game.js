@@ -15,6 +15,9 @@ const gameSchema = new Schema({
     required: true
   },
   tracking: Boolean,
+  bbox: {
+    type: Schema.Types.Mixed
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -32,7 +35,8 @@ gameSchema.initNew = function(params) {
   return Game.create({
     name: params.name,
     tasks: params.tasks,
-    tracking: params.tracking
+    tracking: params.tracking,
+    bbox: params.bbox
   });
 };
 
