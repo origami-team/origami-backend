@@ -41,9 +41,10 @@ app.use(
   )
 );
 
-//const mongoHost = process.env.NODE_ENV == "production" ? "mongo" : "localhost";
-const mongoHost = "mongo"
-const mongoDB = `mongodb://${mongoHost}/origami`;
+const mongoHost = process.env.MONGO_HOST
+const mongoUsername = process.env.MONGO_USERNAME
+const mongoPassword = process.env.MONGO_PASSWORD
+const mongoDB = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}/origami`;
 
 console.log(mongoDB);
 
@@ -176,31 +177,3 @@ const httpServer = http.createServer(app);
 httpServer.listen(3000, () => {
   console.log("HTTP Server running on port 3000");
 });
-
-if (process.env.NODE_ENV == "production") {
-  // Certificate
-  const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/privkey.pem",
-    "utf8"
-  );
-  const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/cert.pem",
-    "utf8"
-  );
-  const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/api.origami.felixerdmann.com/chain.pem",
-    "utf8"
-  );
-
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca
-  };
-
-  const httpsServer = https.createServer(credentials, app);
-
-  httpsServer.listen(443, () => {
-    console.log("HTTPS Server running on port 443");
-  });
-}

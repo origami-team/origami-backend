@@ -1,6 +1,8 @@
 keys
 log
 terraform
+db
+docker-compose.yml
 
 # Local .terraform directories
 **/.terraform/*
