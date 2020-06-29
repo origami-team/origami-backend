@@ -3,13 +3,18 @@ services:
   app:
     build: .
     ports:
-      - 80:80
-      - 443:443
+      - 3000:3000
+        #- 443:443
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+        #- /etc/letsencrypt:/etc/letsencrypt
+      - ./log:/app/log
+        #environment:
+            # - NODE_ENV=production
     links:
       - mongo
   mongo:
     image: mongo
+    volumes:
+      - /home/ubuntu/origami-backend/db:/data/db
     ports:
       - 27017:27017

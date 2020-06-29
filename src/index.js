@@ -41,7 +41,8 @@ app.use(
   )
 );
 
-const mongoHost = process.env.NODE_ENV == "production" ? "mongo" : "localhost";
+//const mongoHost = process.env.NODE_ENV == "production" ? "mongo" : "localhost";
+const mongoHost = "mongo"
 const mongoDB = `mongodb://${mongoHost}/origami`;
 
 console.log(mongoDB);
