@@ -18,6 +18,7 @@ const gameSchema = new Schema({
   bbox: {
     type: Schema.Types.Mixed
   },
+  mapSectionVisible: Boolean,
   createdAt: {
     type: Date,
     default: Date.now
