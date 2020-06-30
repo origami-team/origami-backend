@@ -10,6 +10,9 @@ const gameSchema = new Schema({
     type: String,
     required: true
   },
+  place: {
+    type: String,
+  },
   tasks: {
     type: Array,
     required: true
@@ -35,6 +38,7 @@ gameSchema.initNew = function(params) {
 
   return Game.create({
     name: params.name,
+    place: params.place,
     tasks: params.tasks,
     tracking: params.tracking,
     bbox: params.bbox,

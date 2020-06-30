@@ -65,6 +65,7 @@ app.get("/games", (req, res) => {
   if (req.query.minimal == "true") {
     Game.find()
       .select("name")
+      .select("place")
       .exec((err, games) => {
         if (err) res.status(500).send(err);
         res.send(games);
@@ -86,22 +87,48 @@ app.get("/game/:id", (req, res) => {
   });
 });
 
-app.post("/game", (req, res) => {
-  gameSchema
-    .initNew(req.body)
-    .then(savedGame => {
-      res.status(200).send(savedGame);
-    })
-    .catch(err => res.status(500).send(err));
+app.post("/game", async (req, res) => {
+
+  // create game document and persist in database
+  const Game = mongoose.model("Game", gameSchema);
+  
+  Game.countDocuments({name: req.body.name}, (err, count) => {
+    if(count > 0) {
+      res.status(409).send("name already exists")
+    } else {
+      gameSchema
+        .initNew(req.body)
+        .then(savedGame => {
+          res.status(200).send(savedGame);
+        })
+        .catch(err => res.status(500).send(err));
+    }
+  })
+
+
 });
 
 app.put("/game", (req, res) => {
-  gameSchema
-    .update(req.body)
-    .then(savedGame => {
-      res.status(200).send(savedGame);
-    })
-    .catch(err => res.status(500).send(err));
+
+  // create game document and persist in database
+  const Game = mongoose.model("Game", gameSchema);
+
+  console.log(req.body)
+  
+  Game.countDocuments({name: req.body.name, _id: { $ne: req.body._id }}, (err, count) => {
+    if(count > 0) {
+      res.status(409).send("name already exists")
+    } else {
+      gameSchema
+        .update(req.body)
+        .then(savedGame => {
+          res.status(200).send(savedGame);
+        })
+        .catch(err => res.status(500).send(err));
+    }
+  })
+
+  
 });
 
 app.get("/tracks", (req, res) => {
