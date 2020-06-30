@@ -37,7 +37,8 @@ gameSchema.initNew = function(params) {
     name: params.name,
     tasks: params.tasks,
     tracking: params.tracking,
-    bbox: params.bbox
+    bbox: params.bbox,
+    mapSectionVisible: params.mapSectionVisible
   });
 };
 
