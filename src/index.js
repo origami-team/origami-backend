@@ -177,6 +177,23 @@ app.get('/file/:file', (req, res) => {
 
 });
 
+app.get('/audio/:file', (req, res) => {
+  var gridfsbucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: 'audios'
+  });
+
+  gridfsbucket.find({filename: req.params.file}).hasNext().then(() => {
+    gridfsbucket.openDownloadStreamByName(req.params.file)
+      .on('error', (err) => res.status(404).json(err))
+      .pipe(res)
+      .on('error', () => {
+        console.log("Some error occurred in download:" + error);
+        res.json(error);
+      })
+  }).catch(err => res.json(err))
+
+});
+
   // const GridFSBucket = db.GridFSBucket;
 
   // const gfs = new GridFSBucket(db, {bucketName: 'photos'});

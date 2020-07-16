@@ -11,17 +11,25 @@ var storage = new GridFsStorage({
   url: mongoDB,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
-    const match = ["image/png", "image/jpeg"];
+    const photoMatch = ["image/png", "image/jpeg"];
+    const audioMatch = ["audio/mp3"];
 
-    if (match.indexOf(file.mimetype) === -1) {
+    console.log(file)
+
+    if (photoMatch.indexOf(file.mimetype) !== -1) {
+      return {
+        bucketName: "photos",
+        filename: `${Date.now()}-origami-${file.originalname}`
+      }
+    } else if (audioMatch.indexOf(file.mimetype) !== -1) {
+      return {
+        bucketName: "audios",
+        filename: `${Date.now()}-origami-${file.originalname}`
+      }
+    } else {
       const filename = `${Date.now()}-origami-${file.originalname}`;
       return filename;
     }
-
-    return {
-      bucketName: "photos",
-      filename: `${Date.now()}-origami-${file.originalname}`
-    };
   }
 });
 
