@@ -10,6 +10,7 @@ const https = require("https");
 const fs = require("fs");
 const compression = require("compression");
 var gridfs = require('gridfs-stream');
+require('dotenv').config()
 
 
 const uploadController = require("./controllers/upload");
@@ -42,9 +43,12 @@ app.use(
 );
 
 const mongoHost = process.env.MONGO_HOST
-const mongoUsername = process.env.MONGO_USERNAME
+const mongoUserName = process.env.MONGO_USERNAME
 const mongoPassword = process.env.MONGO_PASSWORD
-const mongoDB = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}/origami`;
+//const mongoDB = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}/origami`;
+const mongoDB = `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoHost}`;
+
+console.log('mongoUsername', mongoUserName);
 
 console.log(mongoDB);
 
