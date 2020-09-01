@@ -12,6 +12,8 @@ const compression = require("compression");
 var gridfs = require('gridfs-stream');
 require('dotenv').config()
 
+const Beaconinfo = require("./models/beaconinfo");
+
 
 const uploadController = require("./controllers/upload");
 
@@ -53,7 +55,7 @@ console.log('mongoUsername', mongoUserName);
 console.log(mongoDB);
 
 
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //Get the default connection
 const db = mongoose.connection;
@@ -95,9 +97,9 @@ app.post("/game", async (req, res) => {
 
   // create game document and persist in database
   const Game = mongoose.model("Game", gameSchema);
-  
-  Game.countDocuments({name: req.body.name}, (err, count) => {
-    if(count > 0) {
+
+  Game.countDocuments({ name: req.body.name }, (err, count) => {
+    if (count > 0) {
       res.status(409).send("name already exists")
     } else {
       gameSchema
@@ -118,9 +120,9 @@ app.put("/game", (req, res) => {
   const Game = mongoose.model("Game", gameSchema);
 
   console.log(req.body)
-  
-  Game.countDocuments({name: req.body.name, _id: { $ne: req.body._id }}, (err, count) => {
-    if(count > 0) {
+
+  Game.countDocuments({ name: req.body.name, _id: { $ne: req.body._id } }, (err, count) => {
+    if (count > 0) {
       res.status(409).send("name already exists")
     } else {
       gameSchema
@@ -132,7 +134,7 @@ app.put("/game", (req, res) => {
     }
   })
 
-  
+
 });
 
 app.get("/tracks", (req, res) => {
@@ -169,7 +171,7 @@ app.get('/file/:file', (req, res) => {
     bucketName: 'photos'
   });
 
-  gridfsbucket.find({filename: req.params.file}).hasNext().then(() => {
+  gridfsbucket.find({ filename: req.params.file }).hasNext().then(() => {
     gridfsbucket.openDownloadStreamByName(req.params.file)
       .on('error', (err) => res.status(404).json(err))
       .pipe(res)
@@ -186,7 +188,7 @@ app.get('/audio/:file', (req, res) => {
     bucketName: 'audios'
   });
 
-  gridfsbucket.find({filename: req.params.file}).hasNext().then(() => {
+  gridfsbucket.find({ filename: req.params.file }).hasNext().then(() => {
     gridfsbucket.openDownloadStreamByName(req.params.file)
       .on('error', (err) => res.status(404).json(err))
       .pipe(res)
@@ -198,27 +200,66 @@ app.get('/audio/:file', (req, res) => {
 
 });
 
-  // const GridFSBucket = db.GridFSBucket;
+/**************************/
+/* ibeacon routes */
+app.post("/beacon-info", async (req, res) => {
+  const beaconinfo = new Beaconinfo(req.body);
+  console.log(`(post)beaconinfo`, beaconinfo);
 
-  // const gfs = new GridFSBucket(db, {bucketName: 'photos'});
+  // To check existance of sent info
+  const doesBeaconInfoExist = await Beaconinfo.exists({ minor: beaconinfo.minor });
+  console.log('//Does it exist', doesBeaconInfoExist);
 
-  // // Check if file
-  // if (!file || file.length === 0) {
-  //   return res.status(404).json({
-  //     err: 'No file exists',
-  //   })
-  // }
+  // check if sent beacon info is already stored
+  if (!doesBeaconInfoExist) {
+    await beaconinfo.save()
+      .then(() =>
+        console.log("User created."));
+    res.status(200).send(beaconinfo);
+    console.log(`(post) beacon info inserted successfully.`);
+  } else {
+    res.status(409).send({ message: "Duplicate beacon info" });
+  }
+});
 
-  // // Check if image
-  // if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
-  //   // Read output to browser
-  //   const readstream = gfs.createReadStream(file.filename)
-  //   readstream.pipe(res)
-  // } else {
-  //   res.status(404).json({
-  //     err: 'Not an image',
-  //   })
-  // }
+app.get("/beacon-info", async (req, res) => {
+  const beaconinfo = await Beaconinfo.find();
+  res.json(beaconinfo);
+  console.log(`(get) beaconinfo retrieved successfully.`);
+});
+
+// Update a beacon info
+app.patch("/beacon-info/:minorNo", async (req, res) => {
+  await Beaconinfo
+    .updateOne({ minor: req.params.minorNo }, { $set: { lng: req.body.lng, lat: req.body.lat, distanceMeter: req.body.distanceMeter } })
+    .then(updatedBInfo => {
+      res.status(200).send(updatedBInfo);
+    })
+    .catch(err => res.status(500).send(err));
+});
+/*  */
+
+// const GridFSBucket = db.GridFSBucket;
+
+// const gfs = new GridFSBucket(db, {bucketName: 'photos'});
+
+// // Check if file
+// if (!file || file.length === 0) {
+//   return res.status(404).json({
+//     err: 'No file exists',
+//   })
+// }
+
+// // Check if image
+// if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+//   // Read output to browser
+//   const readstream = gfs.createReadStream(file.filename)
+//   readstream.pipe(res)
+// } else {
+//   res.status(404).json({
+//     err: 'Not an image',
+//   })
+// }
 
 // Starting both http & https servers
 const httpServer = http.createServer(app);

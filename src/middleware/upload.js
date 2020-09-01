@@ -3,9 +3,9 @@ const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
 
 const mongoHost = process.env.MONGO_HOST
-const mongoUsername = process.env.MONGO_USERNAME
+const mongoUserName = process.env.MONGO_USERNAME
 const mongoPassword = process.env.MONGO_PASSWORD
-const mongoDB = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}/origami`;
+const mongoDB = `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoHost}`;
 
 var storage = new GridFsStorage({
   url: mongoDB,
