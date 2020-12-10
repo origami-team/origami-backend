@@ -1,18 +1,38 @@
-'use strict';
+"use strict";
 
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
-const questionSchema = require('./question');
-const answerSchema = require('./answer');
-
-const taskSchema = new Schema({
-  type: {
-    type: String,
-    required: true
+const TaskSchema = new mongoose.Schema(
+  {
+    answer: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    category: {
+      type: String,
+    },
+    evaluate: {
+      type: String,
+    },
+    mapFeatures: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    name: {
+      type: String,
+    },
+    question: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    settings: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    type: {
+      type: String,
+    },
   },
-  question: questionSchema,
-  answers: [answerSchema]
-});
+  { timestamps: true }
+);
 
-module.exports = taskSchema;
+module.exports = {
+  TaskSchema: TaskSchema,
+  Task: mongoose.model("Task", TaskSchema),
+};
