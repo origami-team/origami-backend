@@ -19,9 +19,6 @@ TrackRouter.route("/:id").get(
   AuthController.roleAuthorization(["admin", "trackAccess"]),
   getTrack
 );
-TrackRouter.route("/").post(
-  passport.authenticate("jwt", { session: false }),
-  postTrack
-);
+TrackRouter.route("/").post(postTrack);
 
 module.exports = TrackRouter;

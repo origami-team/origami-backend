@@ -7,10 +7,7 @@ const uploadController = require("../../controllers/upload");
 const { getImage } = require("./getImage");
 const { getAudio } = require("./getAudio");
 
-FileRouter.route("/upload").post(
-  passport.authenticate("jwt", { session: false }),
-  uploadController.uploadFile
-);
+FileRouter.route("/upload").post(uploadController.uploadFile);
 FileRouter.route("/image/:file").get(getImage);
 FileRouter.route("/audio/:file").get(getAudio);
 
