@@ -1,6 +1,10 @@
 keys
 log
 terraform
+db
+docker-compose.yml
+backup.sh
+init-mongo-user.js
 
 # Local .terraform directories
 **/.terraform/*
