@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 
 const TrackSchema = new mongoose.Schema({
   game: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Game",
     required: true,
   },
   name: {

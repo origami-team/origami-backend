@@ -12,6 +12,11 @@ router.post("/register", AuthController.register);
 //authentication
 router.post("/login", AuthController.authenticate);
 
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
 router.get(
   "/myuser",
   passport.authenticate("jwt", { session: false }),
@@ -28,7 +33,7 @@ router.post(
   AuthController.changePassword
 );
 
-router.post("/confirm-email", AuthController.confirmEmail);
+router.get("/confirm-email", AuthController.confirmEmail);
 
 router.post("/request-password-reset", AuthController.resetPassword);
 
@@ -42,9 +47,19 @@ router.get(
   async function (req, res, next) {
     try {
       const userCalling = await User.findOne({ _id: req.user._id });
-      const games = await Game.find().where("user").equals(userCalling._id);
-
-      res.json(games);
+      const rolesWithGameAccess = ["admin", "contentAdmin"];
+      if (
+        rolesWithGameAccess.some((role) => userCalling.roles.includes(role))
+      ) {
+        const games = await Game.find().select("-user");
+        res.json(games);
+      } else {
+        const games = await Game.find()
+          .where("user")
+          .equals(userCalling._id)
+          .select("-user");
+        res.json(games);
+      }
     } catch (error) {
       next(error);
     }

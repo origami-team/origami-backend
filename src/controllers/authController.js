@@ -1,5 +1,7 @@
 const passport = require("passport");
 
+const { verifyUserRegistration } = require("./mailController");
+
 var User = require("../models/user");
 
 const {
@@ -55,7 +57,7 @@ exports.resetPassword = async function resetPassword(req, res, next) {
 
 exports.setResetPassword = async function setResetPassword(req, res, next) {
   try {
-    await User.resetPassword(req.body[0], req.body[1]);
+    await User.resetPassword(req.body.password, req.body.token);
     res.send(200, {
       code: "Ok",
       message:
@@ -106,8 +108,9 @@ exports.changeMail = async function changeMail(req, res, next) {
 };
 
 module.exports.confirmEmail = async function confirmEmail(req, res, next) {
+  console.log(req);
   try {
-    const user = await User.confirmEmail(req.body.token, req.body.email);
+    const user = await User.confirmEmail(req.query.token);
     if (user) {
       res.send(200, {
         code: "ok",
@@ -118,9 +121,7 @@ module.exports.confirmEmail = async function confirmEmail(req, res, next) {
     }
   } catch (err) {
     console.info(err);
-    res
-      .status(422)
-      .send({ code: "error", message: "Email can not be confirmed" });
+    res.send(422, { code: "error", message: "Email can not be confirmed" });
   }
 };
 
@@ -142,7 +143,7 @@ module.exports.deleteUser = async function deleteUser(req, res, next) {
             res.send(422, { code: "No user found" });
           }
         } else {
-          res.status(401).send("Not Authorized");
+          res.send(401, "Not Authorized");
         }
       }
     );
@@ -155,15 +156,20 @@ module.exports.authenticate = async function authenticate(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (!(typeof username === "string")) {
+  if (typeof username !== "string") {
     return res.json({ success: false, msg: "Wrong password or username" });
   }
-  // let user = await User.getUserByUsername(username);
 
-  const user = await User.findOne({ username: username }).exec();
+  const user = await User.findOne({
+    $or: [{ username: username }, { email: username }],
+  }).exec();
 
   if (!user) {
-    throw new ForbiddenError("User and or password not valid!");
+    return res.send(403, {
+      code: "Unauthorized",
+      message: "Wrong username or password",
+    });
+    // throw new Error("User and or password not valid!");
   }
 
   if (await user.checkPassword(password)) {
@@ -306,12 +312,12 @@ module.exports.register = function register(req, res, next) {
 
   //CAREFUL HARDCODED LENGTH FOR PW
   if (req.body.password.length < 7) {
-    return res.json({
+    return res.send(400, {
       success: false,
       msg: "Password must be at least 8 characters.",
     });
   }
-  User.addUser(newUser, (err, user) => {
+  User.addUser(newUser, async (err, user) => {
     if (err) {
       console.info(err);
 
@@ -320,15 +326,15 @@ module.exports.register = function register(req, res, next) {
           match = err.message.match(regex),
           indexName = match[1] || match[2];
 
-        return res.json({
+        return res.send(400, {
           success: false,
           msg: indexName + " already exists! ",
         });
       } else {
-        return res.json({ success: false, msg: "Failed to register" });
+        return res.send(400, { success: false, msg: "Failed to register" });
       }
     } else {
-      user.mail("shop/newUser");
+      await verifyUserRegistration(user);
       console.info("%s  just registered, id: %s", user.email, user._id);
       return res.json({ success: true, msg: "Registered" });
     }

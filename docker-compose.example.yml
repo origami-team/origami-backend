@@ -7,9 +7,17 @@ services:
     volumes:
       - ./log:/app/log
     environment:
-        - MONGO_HOST=mongo
-        - MONGO_USERNAME=admin
-        - MONGO_PASSWORD=password
+      - NODE_ENV=production
+      - MONGO_HOST=mongo
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+      - MAIL_SMTP_HOST=mail.server.net
+      - MAIL_SMTP_USERNAME=smtpusername
+      - MAIL_SMTP_PASSWORD='smtppass'
+      - API_URL=https://api_url
+      - API_PORT=3000 # ignoring when NODE_ENV=production
+      - APP_URL=https://app_url
+      - APP_PORT=4200 # ignoring when NODE_ENV=production
     links:
       - mongo
   mongo:

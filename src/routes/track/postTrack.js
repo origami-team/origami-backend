@@ -2,10 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const Track = require("../../models/track");
+const Game = require("../../models/game");
 
 const postTrack = async (req, res) => {
   try {
-    const track = new Track(req.body);
+    const trackGame = await Game.findOne({ _id: req.body.game });
+    console.log(trackGame);
+    const track = new Track({ ...req.body, game: trackGame._id });
     const savedTrack = await track.save();
     return res.status(201).send({
       message: "Track is successfully created.",

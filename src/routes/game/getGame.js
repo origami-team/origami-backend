@@ -6,7 +6,7 @@ const Game = require("../../models/game");
 const getGame = async (req, res) => {
   try {
     let id = req.params.id;
-    let result = await Game.findOne({ _id: id });
+    let result = await Game.findOne({ _id: id }).select("-user");
     return res.status(200).send({
       message: "Game found successfully.",
       content: result,

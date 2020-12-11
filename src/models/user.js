@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
+const { resetPassword } = require("../controllers/mailController");
+
 const userNameRequirementsText =
   "Parameter name must consist of at least 4 and up to 40 alphanumerics (a-zA-Z0-9), dot (.), dash (-), underscore (_) and spaces.";
 
@@ -112,12 +114,10 @@ module.exports.changePassword = function (password, user, callback) {
   });
 };
 
-module.exports.confirmEmail = function (token, email) {
+module.exports.confirmEmail = function (token) {
+  console.log("confirming user with token", token);
   return User.findOne({
-    $and: [
-      { $or: [{ unconfirmedEmail: email }] },
-      { emailConfirmationToken: token },
-    ],
+    emailConfirmationToken: token,
   })
     .exec()
     .then(function (user) {
@@ -128,7 +128,7 @@ module.exports.confirmEmail = function (token, email) {
       }
 
       // set email to email address from request
-      user.set("email", email);
+      // user.set("email", email);
       // mark user as confirmed
       user.set("emailConfirmationToken", undefined);
       user.set("emailIsConfirmed", true);
@@ -143,7 +143,7 @@ module.exports.confirmEmail = function (token, email) {
     });
 };
 
-module.exports.initPasswordReset = function (email) {
+module.exports.initPasswordReset = function ({ email }) {
   return this.findOne({ email: email.toLowerCase() })
     .exec()
     .then(function (user) {
@@ -156,7 +156,7 @@ module.exports.initPasswordReset = function (email) {
       user.resetPasswordExpires = Date.now() + 12 * 60 * 60 * 1000;
 
       return user.save().then(function (savedUser) {
-        return savedUser.mail("shop/passwordReset");
+        resetPassword(savedUser);
       });
     });
 };
@@ -209,7 +209,6 @@ module.exports.changeMail = function changeMail(user, mail) {
       user.email,
       user._id
     );
-    user.mail("shop/confirmEmail");
     return user.save();
   });
 
