@@ -21,6 +21,7 @@ const GameSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
     },
     mapSectionVisible: Boolean,
+    geofence: Boolean,
     tracking: Boolean,
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
