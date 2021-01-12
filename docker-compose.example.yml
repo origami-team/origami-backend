@@ -14,6 +14,7 @@ services:
       - MAIL_SMTP_HOST=mail.server.net
       - MAIL_SMTP_USERNAME=smtpusername
       - MAIL_SMTP_PASSWORD='smtppass'
+      - MAIL_SENDER_ADDRESS=mail@example.com
       - API_URL=https://api_url
       - API_PORT=3000 # ignoring when NODE_ENV=production
       - APP_URL=https://app_url

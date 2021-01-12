@@ -20,7 +20,7 @@ module.exports.verifyUserRegistration = async (user) => {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"OriGami 👻" <mail@felixerdmann.com>',
+    from: `"OriGami 👻" <${process.env.MAIL_SENDER_ADDRESS}>`,
     to: user.email,
     subject: "Deine Registrierung bei OriGami", // Subject line
     html: `<b>Hallo ${user.username} 👋</b><br /><p>Bitte klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen <br /><br /><a href="${link}">${link}</a><br /><br /><p>Liebe Grüße<br>Dein OriGami-Team</p>`,
@@ -49,7 +49,7 @@ module.exports.resetPassword = async (user) => {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"OriGami 👻" <mail@felixerdmann.com>',
+    from: `"OriGami 👻" <${process.env.MAIL_SENDER_ADDRESS}>`,
     to: user.email,
     subject: "Zurücksetzen deines OriGami Passworts", // Subject line
     html: `<b>Hallo ${user.username} 👋</b><br /><p>Bitte klicke auf den folgenden Link um dein Passwort zurückzusetzen. Der Link ist nur 12 Stunden gültig <br /><br /><a href="${link}">${link}</a><br /><br /><p>Liebe Grüße<br>Dein OriGami-Team</p>`,
