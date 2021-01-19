@@ -22,10 +22,18 @@ const getVideo = async (req, res) => {
 
     console.log(video);
 
+    // Check for range headers to find our start time
+    const range = req.headers.range;
+
     // Create response headers
     const videoSize = video.length;
-    const start = 0;
+    let start = 0;
     const end = videoSize - 1;
+
+    if (range) {
+      start = Number(range.replace(/\D/g, ""));
+      console.log(range, start);
+    }
 
     const contentLength = end - start + 1;
     const headers = {
