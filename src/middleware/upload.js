@@ -12,7 +12,7 @@ var storage = new GridFsStorage({
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
     const photoMatch = ["image/png", "image/jpeg"];
-    const audioMatch = ["audio/aac"];
+    const audioMatch = ["audio/aac", "audio/mpeg"];
     const videoMatch = ["video/mp4", "video/quicktime"];
 
     console.log(file);
@@ -24,9 +24,10 @@ var storage = new GridFsStorage({
       };
     }
     if (audioMatch.indexOf(file.mimetype) !== -1) {
+      const extension = file.mimetype.includes("aac") ? ".aac" : "";
       return {
         bucketName: "audios",
-        filename: `${Date.now()}-origami-${file.originalname}.aac`,
+        filename: `${Date.now()}-origami-${file.originalname}${extension}`,
       };
     }
     if (videoMatch.indexOf(file.mimetype) !== -1) {
