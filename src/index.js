@@ -84,3 +84,29 @@ const httpServer = http.createServer(app);
 httpServer.listen(3000, () => {
   console.log("HTTP Server running on port 3000");
 });
+
+/*
+* VR world
+* socket.IO implemtatoin for real time communication
+* between origami App and VR App to share avatar's
+* instant location and direction.
+*/
+const io = require('socket.io')(httpServer)
+
+io.on('connection', function (socket) {
+  console.log("Connection made!!!");
+
+  socket.on('updateAvatarPosition', (data) => {
+    io.emit('updateAvatarPosition', {x: data["x_axis"], z: data["y_axis"]})   
+  });
+
+  socket.on('updateAvatarDirection', (avatarHeading) => {
+    io.emit('updateAvatarDirection', {angleValue: avatarHeading["x_axis"]})   
+  });
+
+  socket.on('disconnect', function () {
+    console.log("Disonnection!!");
+  });
+
+});
+//VR world */
