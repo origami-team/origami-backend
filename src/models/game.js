@@ -24,6 +24,7 @@ const GameSchema = new mongoose.Schema(
     geofence: Boolean,
     tracking: Boolean,
     isVRWorld: Boolean,
+    isVRMirrored: Boolean,
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
