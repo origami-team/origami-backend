@@ -1,6 +1,6 @@
 const util = require("util");
 const multer = require("multer");
-const GridFsStorage = require("multer-gridfs-storage");
+const { GridFsStorage } = require("multer-gridfs-storage");
 
 const mongoHost = process.env.MONGO_HOST;
 const mongoUsername = process.env.MONGO_USERNAME;
