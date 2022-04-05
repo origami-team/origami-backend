@@ -25,6 +25,7 @@ const GameSchema = new mongoose.Schema(
     tracking: Boolean,
     isVRWorld: Boolean,
     isVRMirrored: Boolean,
+    isVisible: Boolean,
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
