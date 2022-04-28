@@ -20,10 +20,13 @@ module.exports.verifyUserRegistration = async (user) => {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: `"OriGami 👻" <${process.env.MAIL_SENDER_ADDRESS}>`,
+    from: `"GeoGami" <${process.env.MAIL_SENDER_ADDRESS}>`,
     to: user.email,
-    subject: "Deine Registrierung bei OriGami", // Subject line
-    html: `<b>Hallo ${user.username} 👋</b><br /><p>Bitte klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen <br /><br /><a href="${link}">${link}</a><br /><br /><p>Liebe Grüße<br>Dein OriGami-Team</p>`,
+    subject: "Deine Registrierung bei GeoGami / Your registration at GeoGami", // Subject line
+    html: `Hallo <b> ${user.username}, </b ><br />
+    <p>Bitte klicke auf den folgenden Link um deine E-Mail Adresse zu bestätigen /  Please click on the link below to confirm your email address :<br /><br />
+    <a href="${link}">${link}</a> <br /><br />
+    <p>Liebe Grüße / Best wishes<br>GeoGami Team</p>`,
   });
 
   console.log("Message sent: %s", info.messageId);
@@ -49,10 +52,15 @@ module.exports.resetPassword = async (user) => {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: `"OriGami 👻" <${process.env.MAIL_SENDER_ADDRESS}>`,
+    from: `"GeoGami" <${process.env.MAIL_SENDER_ADDRESS}>`,
     to: user.email,
-    subject: "Zurücksetzen deines OriGami Passworts", // Subject line
-    html: `<b>Hallo ${user.username} 👋</b><br /><p>Bitte klicke auf den folgenden Link um dein Passwort zurückzusetzen. Der Link ist nur 12 Stunden gültig <br /><br /><a href="${link}">${link}</a><br /><br /><p>Liebe Grüße<br>Dein OriGami-Team</p>`,
+    subject: "Zurücksetzen deines GeoGami Passworts / Your GeoGami Password Reset", // Subject line
+    html: `Hallo <b> ${user.username},</b>
+    <br/><p>Bitte klicke auf den folgenden Link um dein Passwort zurückzusetzen / Please click the link below to reset your password: <br /><br />
+    <a href="${link}">${link}</a> <br /><br />
+    Der Link ist nur 12 Stunden gültig / The link above is valid for the next 12 hours. <br /><br />
+    <p>Liebe Grüße / Best wishes<br>GeoGami Team</p>
+    <br/><br/><br/>`,
   });
 
   console.log("Message sent: %s", info.messageId);
