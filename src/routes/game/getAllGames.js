@@ -6,7 +6,7 @@ const Game = require("../../models/game");
 const getAllGames = async (req, res) => {
   try {
     if ("minimal" in req.query) {
-      let result = await Game.find().select("name").select("place");
+      let result = await Game.find().select("name").select("place").select("isVRWorld");
       return res.status(200).send({
         message: "Games (minimal) found successfully.",
         content: result,
