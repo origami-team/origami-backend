@@ -34,24 +34,31 @@ exports.roleAuthorization = function (roles) {
 };
 
 exports.resetPassword = async function resetPassword(req, res, next) {
-  try {
-    await User.initPasswordReset(req.body.email);
-    console.info("%s  just requested password reset", req.body.email);
-    res.send(200, {
-      code: "Ok",
-      message: "Password change requested. Email send!",
+  if (!validator.isEmail(req.body.email.email)) {
+    return res.send(400, {
+      success: false,
+      message: "Invalid Email.",
     });
-  } catch (err) {
-    console.info(err);
-    if (err.message === "Password reset for this user not possible") {
+  } else {
+    try {
+      await User.initPasswordReset(req.body.email);
+      console.info("%s  just requested password reset", req.body.email);
       res.send(200, {
         code: "Ok",
         message: "Password change requested. Email send!",
       });
-    } else {
-      res
-        .status(200)
-        .send({ code: "error", message: "Could not request password reset." });
+    } catch (err) {
+      console.info(err);
+      if (err.message === "Password reset for this user not possible") {
+        res.send(200, {
+          code: "Ok",
+          message: "Password change requested. Email send!",
+        });
+      } else {
+        res
+          .status(200)
+          .send({ code: "error", message: "Could not request password reset." });
+      }
     }
   }
 };
@@ -311,7 +318,7 @@ module.exports.register = function register(req, res, next) {
     password: req.body.password,
   });
 
-  //CAREFUL HARDCODED email-validator
+  // CAREFUL HARDCODED Email-Validator
   if (!validator.isEmail(req.body.email)) {
     return res.send(400, {
       success: false,
@@ -319,7 +326,7 @@ module.exports.register = function register(req, res, next) {
     });
   }
 
-  //CAREFUL HARDCODED LENGTH FOR Username
+  // CAREFUL HARDCODED LENGTH FOR Username
   if (req.body.username.length < 5) {
     return res.send(400, {
       success: false,
@@ -327,14 +334,14 @@ module.exports.register = function register(req, res, next) {
     });
   }
 
-  //CAREFUL HARDCODED LENGTH FOR PW
+  // CAREFUL HARDCODED LENGTH FOR Password
   if (req.body.password.length < 8) {
     return res.send(400, {
       success: false,
       msg: "Password must be at least 8 characters.",
     });
   }
-  
+
   User.addUser(newUser, async (err, user) => {
     if (err) {
       console.info(err);
