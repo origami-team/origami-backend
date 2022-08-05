@@ -311,11 +311,11 @@ module.exports.register = function register(req, res, next) {
     password: req.body.password,
   });
 
-  //CAREFUL HARDCODED LENGTH FOR PW
-  if (req.body.password.length < 8) {
+  //CAREFUL HARDCODED email-validator
+  if (!validator.isEmail(req.body.email)) {
     return res.send(400, {
       success: false,
-      msg: "Password must be at least 8 characters.",
+      msg: "Invalid Email.",
     });
   }
 
@@ -327,14 +327,14 @@ module.exports.register = function register(req, res, next) {
     });
   }
 
-  //CAREFUL HARDCODED email-validator
-  if (!validator.isEmail(req.body.email)) {
+  //CAREFUL HARDCODED LENGTH FOR PW
+  if (req.body.password.length < 8) {
     return res.send(400, {
       success: false,
-      msg: "Invalid Email.",
+      msg: "Password must be at least 8 characters.",
     });
   }
-
+  
   User.addUser(newUser, async (err, user) => {
     if (err) {
       console.info(err);
