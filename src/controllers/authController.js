@@ -3,6 +3,7 @@ const passport = require("passport");
 const { verifyUserRegistration } = require("./mailController");
 
 var User = require("../models/user");
+var validator = require('validator');   // To validate received email
 
 const {
   createToken,
@@ -165,7 +166,7 @@ module.exports.authenticate = async function authenticate(req, res, next) {
   }).exec();
 
   if (!user) {
-    return res.send(403, {
+    return res.send(401, {
       code: "Unauthorized",
       message: "Wrong username or password",
     });
@@ -183,7 +184,7 @@ module.exports.authenticate = async function authenticate(req, res, next) {
       refreshToken,
     });
   } else {
-    return res.send(403, {
+    return res.send(401, {
       code: "Unauthorized",
       message: "Wrong username or password",
     });
@@ -311,12 +312,29 @@ module.exports.register = function register(req, res, next) {
   });
 
   //CAREFUL HARDCODED LENGTH FOR PW
-  if (req.body.password.length < 7) {
+  if (req.body.password.length < 8) {
     return res.send(400, {
       success: false,
       msg: "Password must be at least 8 characters.",
     });
   }
+
+  //CAREFUL HARDCODED LENGTH FOR Username
+  if (req.body.username.length < 5) {
+    return res.send(400, {
+      success: false,
+      msg: "Username must be at least 5 characters.",
+    });
+  }
+
+  //CAREFUL HARDCODED email-validator
+  if (!validator.isEmail(req.body.email)) {
+    return res.send(400, {
+      success: false,
+      msg: "Invalid Email.",
+    });
+  }
+
   User.addUser(newUser, async (err, user) => {
     if (err) {
       console.info(err);
