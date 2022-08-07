@@ -73,11 +73,13 @@ const gameRouter = require("./routes/game");
 const trackRouter = require("./routes/track");
 const fileRouter = require("./routes/file");
 const userRouter = require("./routes/user");
+const AppVersionRouter = require("./routes/appversion");
 
 app.use("/game", gameRouter);
 app.use("/track", trackRouter);
 app.use("/file", fileRouter);
 app.use("/user", userRouter);
+app.use("/appversion", AppVersionRouter);
 
 // Starting both http & https servers
 const httpServer = http.createServer(app);
