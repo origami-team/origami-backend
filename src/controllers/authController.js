@@ -76,6 +76,28 @@ exports.setResetPassword = async function setResetPassword(req, res, next) {
   }
 };
 
+// Delete User Account 
+exports.deleteUserAccount = async function deleteUserAccount(req, res, next) {
+  try {
+    // Find user in db by username
+    const user = await User.findOne({ username: req.body.username }).exec();
+    if (user){
+      console.log("User successfully deleted")
+      await User.deleteUser(req.body);
+      res.send(200, {
+        code: "Ok",
+        message:
+          "User successfully deleted!",
+      });
+    } else {
+      console.log("No user found")
+      res.send(404, { code: "No user found!" });
+    }
+  } catch (err) {
+    res.send(200, err);
+  }
+};
+
 exports.changeMail = async function changeMail(req, res, next) {
   User.findOne({ email: req.body.mail }, async function (err, user) {
     if (user) {

@@ -71,11 +71,20 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   AuthController.changeMail
 );
+
+// delete my account (updated)
 router.post(
   "/delete-me",
   passport.authenticate("jwt", { session: false }),
-  AuthController.deleteUser
+  AuthController.deleteUserAccount
 );
+
+//--- ToDo: check it out
+/* router.post(
+  "/delete-me",
+  passport.authenticate("jwt", { session: false }),
+  AuthController.deleteUser
+); */
 
 /* GET ALL Users */
 router.get(
