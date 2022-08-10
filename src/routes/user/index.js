@@ -75,7 +75,7 @@ router.post(
 // delete my account (updated)
 router.post(
   "/delete-me",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }), //--- ToDo: check it out
   AuthController.deleteUserAccount
 );
 
