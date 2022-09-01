@@ -126,6 +126,29 @@ router.post(
   }
 );
 
+/* UPDATE user Role By Admin */ //Qamaz
+router.put(
+  "/update-role",
+  passport.authenticate("jwt", { session: false }),
+  AuthController.roleAuthorization(["admin"]),
+  function (req, res, next) {
+    User.findByIdAndUpdate(
+      req.body._id,
+      {roles: [req.body.roles[0]]},
+      { new: true },
+      function (err, post) {
+        if (err) {
+          console.log("===error: ", err)
+          return next(err);
+        } else {
+          res.json(post);
+          console.log("===post: ", post)
+        }
+      }
+    );
+  }
+);
+
 /* UPDATE user */
 router.put(
   "/user/:id",
