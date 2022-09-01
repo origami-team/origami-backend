@@ -55,12 +55,17 @@ module.exports.resetPassword = async (user) => {
     from: `"GeoGami" <${process.env.MAIL_SENDER_ADDRESS}>`,
     to: user.email,
     subject: "Zurücksetzen deines GeoGami Passworts / Your GeoGami Password Reset", // Subject line
-    html: `Hallo <b> ${user.username},</b>
-    <br/><p>Bitte klicke auf den folgenden Link um dein Passwort zurückzusetzen / Please click the link below to reset your password: <br /><br />
-    <a href="${link}">${link}</a> <br /><br />
-    Der Link ist nur 12 Stunden gültig / The link above is valid for the next 12 hours. <br /><br />
-    <p>Liebe Grüße / Best wishes<br>GeoGami Team</p>
-    <br/><br/><br/>`,
+    html: `Hallo <b> ${user.username},</b> <br/>
+    <p> Wir haben eine Anfrage zum Zurücksetzen Ihres GeoGami-Passworts erhalten. Wenn Sie das waren, verwenden Sie bitte den Bestätigungscode unten, um das Zurücksetzen Ihres Passworts abzuschließen. </p>
+    </p>Verification code: ${user.resetPasswordToken}</p><br />
+    <p>Liebe Grüße <br> GeoGami Team</p>
+    <br/><br/>
+  
+    <b>Englsih Version</b><br /><br />
+    Hello <b> ${user.username}, </b><br />
+    <p> We received a request to reset your GeoGami password. If this was you, please use the verification code below to finish resetting your password. </p>
+    </p>Verification code: ${user.resetPasswordToken}</p><br/>
+    <p>Best wishes <br> GeoGami Team</p>`,
   });
 
   console.log("Message sent: %s", info.messageId);
