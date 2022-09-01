@@ -45,7 +45,7 @@ const UserSchema = mongoose.Schema(
     },
     language: {
       type: String,
-      default: "de_DE",
+      default: "de_DE", // update this to be based on user language
     },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
@@ -122,7 +122,7 @@ module.exports.confirmEmail = function (token) {
     .exec()
     .then(function (user) {
       if (!user) {
-        throw new Error("invalid email confirmation token", {
+        throw new Error("invalid email confirmation token.", {
           type: "ForbiddenError",
         });
       }
@@ -148,12 +148,22 @@ module.exports.initPasswordReset = function ({ email }) {
     .exec()
     .then(function (user) {
       if (!user) {
-        throw new Error("Password reset for this user not possible", {
+        //throw new Error("Password reset for this user not possible", {
+        throw new Error("No account associated with the entered email address.", {
           type: "ForbiddenError",
         });
       }
-      user.resetPasswordToken = uuidv4();
-      user.resetPasswordExpires = Date.now() + 12 * 60 * 60 * 1000;
+
+      //user.resetPasswordToken = uuidv4();
+      // set expiration to 3 hours (one hour as MongoDB stores time in UTC )
+      user.resetPasswordExpires = Date.now() + 3 * 60 * 60 * 1000; // set 
+
+      // generate a verification code of 5 digits
+      var generateRandomNDigits = (n) => {
+        return Math.floor(Math.random() * (9 * (Math.pow(10, n)))) + (Math.pow(10, n));
+      }
+      let verificationCode = generateRandomNDigits(4)
+      user.resetPasswordToken = verificationCode
 
       return user.save().then(function (savedUser) {
         resetPassword(savedUser);
@@ -161,12 +171,24 @@ module.exports.initPasswordReset = function ({ email }) {
     });
 };
 
-module.exports.resetPassword = function resetPassword(password, token) {
-  return this.findOne({ resetPasswordToken: token })
+module.exports.resetPassword = function resetPassword(password, email, verificationCode) {
+  return this.findOne({ email: email })
     .exec()
     .then(function (user) {
       if (!user) {
         throw new Error("Password reset for this user not possible", {
+          type: "ForbiddenError",
+        });
+      }
+
+      if (user.resetPasswordToken != verificationCode) {
+        throw new Error("Incorrect verification code. Please verify your code and try again.", {
+          type: "ForbiddenError",
+        });
+      }
+
+      if (password.length < 8) {
+        throw new Error("Password must be at least 8 characters long.", {
           type: "ForbiddenError",
         });
       }
@@ -176,15 +198,12 @@ module.exports.resetPassword = function resetPassword(password, token) {
           type: "ForbiddenError",
         });
       }
-      if (!password.length > 7) {
-        throw new Error("Password must be at least 8 characters long", {
-          type: "ForbiddenError",
-        });
-      }
 
       user.resetPasswordToken = "";
       user.resetPasswordExpires = Date.now();
 
+      // update password
+      //-- ToDo
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, (err, hash) => {
           if (err) throw err;

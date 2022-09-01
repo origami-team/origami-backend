@@ -49,30 +49,28 @@ exports.resetPassword = async function resetPassword(req, res, next) {
       });
     } catch (err) {
       console.info(err);
-      if (err.message === "Password reset for this user not possible") {
-        res.send(200, {
-          code: "Ok",
-          message: "Password change requested. Email send!",
-        });
-      } else {
-        res
-          .status(200)
-          .send({ code: "error", message: "Could not request password reset." });
-      }
+      res.send(400, {
+        success: false,
+        message: err.message,
+      });
     }
   }
 };
 
 exports.setResetPassword = async function setResetPassword(req, res, next) {
   try {
-    await User.resetPassword(req.body.password, req.body.token);
+    await User.resetPassword(req.body.newPassword, req.body.email, req.body.verificationCode);
     res.send(200, {
       code: "Ok",
       message:
         "Password successfully changed. You can now login with your new password",
     });
   } catch (err) {
-    res.send(200, err);
+    //-- ToDo
+    res.send(400, {
+      success: false,
+      message: err.message,
+    });
   }
 };
 
