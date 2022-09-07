@@ -41,7 +41,7 @@ const UserSchema = mongoose.Schema(
       type: [String],
       required: true,
       default: ["user"],
-      enum: ["user", "contentAdmin", "trackAccess", "admin"],
+      enum: ["user", "contentAdmin", "trackAccess", "admin", "scholar"],
     },
     language: {
       type: String,
