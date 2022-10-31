@@ -35,7 +35,7 @@ router.post(
 
 router.get("/confirm-email", AuthController.confirmEmail);
 
-router.post("/request-password-reset", AuthController.resetPassword);
+router.post("/request-password-reset", AuthController.requestResetPassword);
 
 router.post("/password-reset", AuthController.setResetPassword);
 router.post("/refresh-auth", AuthController.refreshJWT);

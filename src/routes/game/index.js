@@ -5,10 +5,12 @@ var GameRouter = express.Router();
 
 const { getGame } = require("./getGame");
 const { getAllGames } = require("./getAllGames");
+const { getAllGamesWithLocs } = require("./getAllGamesWithLocs");
 const { postGame } = require("./postGame");
 const { putGame } = require("./putGame");
 
 GameRouter.route("/all").get(getAllGames);
+GameRouter.route("/allwithlocs").get(getAllGamesWithLocs);
 GameRouter.route("/:id").get(getGame);
 GameRouter.route("/").post(
   passport.authenticate("jwt", { session: false }),
