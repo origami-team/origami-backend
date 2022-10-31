@@ -33,7 +33,7 @@ exports.roleAuthorization = function (roles) {
   };
 };
 
-exports.resetPassword = async function resetPassword(req, res, next) {
+exports.requestResetPassword = async function requestResetPassword(req, res, next) {
   if (!validator.isEmail(req.body.email.email)) {
     return res.send(400, {
       success: false,
