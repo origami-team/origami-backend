@@ -7,7 +7,17 @@ const task = require("../../models/task");
 
 const getAllGamesWithLocs = async (req, res) => {
     try {
-        let result = await Game.find().select("-user");
+        //let result = await Game.find().select("-user");
+
+
+        // Temporarily update for public users
+        // Get all games except multiplyer ones 
+        let result = await Game.find({
+            $or: [
+                { "isMultiplayerGame": { $eq: false } },
+                { "isMultiplayerGame": { $eq: undefined } }
+            ]
+        }).select("-user");
         /*
          * using Oject asssign to get coords of each game by checking whether the game consist of nav task
          * then assign nav coords as game coords
