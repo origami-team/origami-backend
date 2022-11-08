@@ -12,6 +12,7 @@ const getAllGames = async (req, res) => {
         content: result,
       });
     } else {
+      // Get games data except user id
       let result = await Game.find().select("-user");
       console.log(result);
       return res.status(200).send({
