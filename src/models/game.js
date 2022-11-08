@@ -20,6 +20,8 @@ const GameSchema = new mongoose.Schema(
     bbox: {
       type: mongoose.Schema.Types.Mixed,
     },
+    isMultiplayerGame: Boolean,
+    numPlayers: Number,
     mapSectionVisible: Boolean,
     geofence: Boolean,
     tracking: Boolean,
