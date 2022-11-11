@@ -51,7 +51,15 @@ router.get(
       if (
         rolesWithGameAccess.some((role) => userCalling.roles.includes(role))
       ) {
-        const games = await Game.find().select("-user");
+        // temp update
+        // const games = await Game.find().select("-user");
+
+        const games = await Game.find({
+          $or: [
+            { "isMultiplayerGame": { $eq: false } },
+            { "isMultiplayerGame": { $eq: undefined } }
+          ]
+        }).select("-user");
         res.json(games);
       } else {
         const games = await Game.find()
