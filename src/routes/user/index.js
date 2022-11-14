@@ -92,7 +92,7 @@ router.post(
 router.get(
   "/user/",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     // if (req.query.user )
     User.find(function (err, users) {
@@ -106,7 +106,7 @@ router.get(
 router.get(
   "/user/:id",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     User.findById(req.params.id, function (err, post) {
       if (err) return next(err);
@@ -119,7 +119,7 @@ router.get(
 router.post(
   "/user/",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     User.create(req.body, function (err, post) {
       if (err) return next(err);
@@ -132,7 +132,7 @@ router.post(
 router.put(
   "/update-role",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     User.findByIdAndUpdate(
       req.body._id,
@@ -155,7 +155,7 @@ router.put(
 router.put(
   "/user/:id",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     User.findByIdAndUpdate(
       req.params.id,
@@ -173,7 +173,7 @@ router.put(
 router.delete(
   "/user/:id",
   passport.authenticate("jwt", { session: false }),
-  AuthController.roleAuthorization(["admin"]),
+  AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
     User.findByIdAndRemove(req.params.id, req.body, function (err, post) {
       if (err) return next(err);
