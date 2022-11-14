@@ -47,19 +47,13 @@ router.get(
   async function (req, res, next) {
     try {
       const userCalling = await User.findOne({ _id: req.user._id });
-      const rolesWithGameAccess = ["admin", "contentAdmin"];
+      const rolesWithGameAccess = ["contentAdmin"];
       if (
         rolesWithGameAccess.some((role) => userCalling.roles.includes(role))
       ) {
         // temp update
-        // const games = await Game.find().select("-user");
-
-        const games = await Game.find({
-          $or: [
-            { "isMultiplayerGame": { $eq: false } },
-            { "isMultiplayerGame": { $eq: undefined } }
-          ]
-        }).select("-user");
+        const games = await Game.find().select("-user");
+        
         res.json(games);
       } else {
         const games = await Game.find()
