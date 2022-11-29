@@ -7,7 +7,7 @@ const task = require("../../models/task");
 
 const getAllGamesWithLocs = async (req, res) => {
     try {
-        //let result = await Game.find().select("-user");
+        let result = await Game.find().select("-user");
 
 
         // Temporarily update for public users
