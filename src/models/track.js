@@ -28,6 +28,8 @@ const TrackSchema = new mongoose.Schema({
   answers: {
     type: Array,
   },
+  isMultiplayerGame: Boolean,
+  numPlayers: Number,
   players: {
     type: Array,
   },
