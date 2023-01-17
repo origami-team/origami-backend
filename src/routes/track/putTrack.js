@@ -13,6 +13,7 @@ const putTrack = async (req, res) => {
     storedTrack.waypoints[playerNo - 1] = req.body.waypoints;
     storedTrack.events[playerNo - 1] = req.body.events;
     storedTrack.players[playerNo - 1] = req.body.players[0];
+    storedTrack.device[playerNo - 1] = req.body.device;
 
     // 3. Update stored track in db
     const updatedTrack = await Track.updateOne(

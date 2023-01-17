@@ -5,6 +5,8 @@ db
 docker-compose.yml
 backup.sh
 init-mongo-user.js
+package-lock.json
+.vscode
 
 # Local .terraform directories
 **/.terraform/*
