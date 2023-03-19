@@ -27,6 +27,7 @@ const GameSchema = new mongoose.Schema(
     tracking: Boolean,
     isVRWorld: Boolean,
     isVRMirrored: Boolean,
+    virEnvType: String,
     isVisible: Boolean,
     isCuratedGame: Boolean,
     coords: Array,
