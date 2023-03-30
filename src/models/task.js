@@ -27,8 +27,11 @@ const TaskSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-    }, 
+    },
     collaborationType: {
+      type: String,
+    },
+    virEnvType: {
       type: String,
     },
   },
