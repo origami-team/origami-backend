@@ -10,7 +10,7 @@ const getAllGames = async (req, res) => {
       // allow only content-admin to get multiplayer games
       if ("contentAdmin" in req.query) {
         // get all games
-        result = await Game.find().select("name").select("place").select("user").select("isVRWorld").select("isCuratedGame").select("isMultiplayerGame").select("numPlayers");
+        result = await Game.find().select("name").select("place").select("user").select("isVRWorld").select("isCuratedGame").select("isMultiplayerGame").select("numPlayers").select("tasksCount");
       } else {
         // Get all games except multiplyer ones
         result = await Game.find({
@@ -18,7 +18,7 @@ const getAllGames = async (req, res) => {
             { "isMultiplayerGame": { $eq: false } },
             { "isMultiplayerGame": { $eq: undefined } }
           ]
-        }).select("name").select("place").select("user").select("isVRWorld").select("isCuratedGame");
+        }).select("name").select("place").select("user").select("isVRWorld").select("isCuratedGame").select("tasksCount");;
 
       }
 

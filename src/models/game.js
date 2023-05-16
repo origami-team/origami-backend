@@ -22,6 +22,7 @@ const GameSchema = new mongoose.Schema(
     },
     isMultiplayerGame: Boolean,
     numPlayers: Number,
+    tasksCount: Number,
     mapSectionVisible: Boolean,
     geofence: Boolean,
     tracking: Boolean,
