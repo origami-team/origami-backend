@@ -29,7 +29,7 @@ const getUserGames = async (req, res) => {
     );
 
     return res.status(200).send({
-      message: "Tracks found successfully.",
+      message: "Games found successfully.",
       content: gamesWithTracks,
     });
   } catch (err) {
