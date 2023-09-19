@@ -23,7 +23,7 @@ const getUserGames = async (req, res) => {
         let gameTracks = await Track.find({ game: game._id });
         let tracksCount = gameTracks.length;
         if (tracksCount > 0) {
-          gamesWithTracks.push({ game, tracksCount: tracksCount });
+          gamesWithTracks.push({ _id: game._id, name: game.name, tracksCount: tracksCount });
         }
       })
     );
