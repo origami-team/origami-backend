@@ -12,7 +12,9 @@ const getUserGames = async (req, res) => {
     //* 2. Get user games
     let userGames = await Game.find({ user: user._id })
       .select("_id")
-      .select("name");
+      .select("name")
+      .select("isVRWorld")
+      .select("isMultiplayerGame");
 
     //*3.  filter games that has tracks and add tracksCount property
     let gamesWithTracks = [];
@@ -23,7 +25,13 @@ const getUserGames = async (req, res) => {
         let gameTracks = await Track.find({ game: game._id });
         let tracksCount = gameTracks.length;
         if (tracksCount > 0) {
-          gamesWithTracks.push({ _id: game._id, name: game.name, tracksCount: tracksCount });
+          gamesWithTracks.push({
+            _id: game._id,
+            name: game.name,
+            isVRWorld: game.isVRWorld,
+            isMultiplayerGame: game.isMultiplayerGame,
+            tracksCount: tracksCount,
+          });
         }
       })
     );
