@@ -8,6 +8,7 @@ const TrackRouter = express.Router();
 //* Used in evaluate page
 const { getTrack } = require("./getTrack");
 const { getTrackWaypoints } = require("./getTrackWaypoints");
+const { getTrackWaypointsEvents } = require("./getTrackWaypointsEvents");
 const { getAllTracks } = require("./getAllTracks");
 const { getGameTracksById } = require("./getGameTracks");
 const { postTrack } = require("./postTrack");
@@ -56,6 +57,17 @@ TrackRouter.route("/waypoints/:id").get(
     "scholar",
   ]),
   getTrackWaypoints
+);
+
+TrackRouter.route("/waypointswithevents/:id").get(
+  passport.authenticate("jwt", { session: false }),
+  AuthController.roleAuthorization([
+    "admin",
+    "contentAdmin",
+    "trackAccess",
+    "scholar",
+  ]),
+  getTrackWaypointsEvents
 );
 
 TrackRouter.route("/").post(postTrack);
