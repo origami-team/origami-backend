@@ -14,7 +14,8 @@ const getUserGames = async (req, res) => {
       .select("_id")
       .select("name")
       .select("isVRWorld")
-      .select("isMultiplayerGame");
+      .select("isMultiplayerGame")
+      .select("virEnvType");
 
     //*3.  filter games that has tracks and add tracksCount property
     let gamesWithTracks = [];
@@ -30,6 +31,7 @@ const getUserGames = async (req, res) => {
             name: game.name,
             isVRWorld: game.isVRWorld,
             isMultiplayerGame: game.isMultiplayerGame,
+            virEnvType: game.virEnvType,
             tracksCount: tracksCount,
           });
         }
