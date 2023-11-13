@@ -1,7 +1,5 @@
 const Track = require("../../models/track");
 
-const Game = require("../../models/game");
-
 const getGameTracksById = async (req, res) => {
   try {
     let gameId = req.params.id;

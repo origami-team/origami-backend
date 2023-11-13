@@ -5,9 +5,11 @@ var AuthController = require("../../controllers/authController");
 
 const TrackRouter = express.Router();
 
-const { getTrack } = require("./getTrack");
-const { getAllTracks } = require("./getAllTracks");
 //* Used in evaluate page
+const { getTrack } = require("./getTrack");
+const { getTrackWaypoints } = require("./getTrackWaypoints");
+const { getTrackWaypointsEvents } = require("./getTrackWaypointsEvents");
+const { getAllTracks } = require("./getAllTracks");
 const { getGameTracksById } = require("./getGameTracks");
 const { postTrack } = require("./postTrack");
 const { putTrack } = require("./putTrack");
@@ -44,6 +46,28 @@ TrackRouter.route("/:id").get(
     "scholar",
   ]),
   getTrack
+);
+
+TrackRouter.route("/waypoints/:id").get(
+  passport.authenticate("jwt", { session: false }),
+  AuthController.roleAuthorization([
+    "admin",
+    "contentAdmin",
+    "trackAccess",
+    "scholar",
+  ]),
+  getTrackWaypoints
+);
+
+TrackRouter.route("/waypointswithevents/:id").get(
+  passport.authenticate("jwt", { session: false }),
+  AuthController.roleAuthorization([
+    "admin",
+    "contentAdmin",
+    "trackAccess",
+    "scholar",
+  ]),
+  getTrackWaypointsEvents
 );
 
 TrackRouter.route("/").post(postTrack);
