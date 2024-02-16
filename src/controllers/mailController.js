@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 module.exports.verifyUserRegistration = async (user) => {
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_SMTP_HOST,
-    port: 465,
+    port: process.env.MAIL_SMTP_PORT,
     secure: true,
     auth: {
       user: process.env.MAIL_SMTP_USERNAME,
