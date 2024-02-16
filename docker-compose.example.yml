@@ -12,6 +12,7 @@ services:
       - MONGO_USERNAME=admin
       - MONGO_PASSWORD=password
       - MAIL_SMTP_HOST=mail.server.net
+      - MAIL_SMTP_PORT=smtpport
       - MAIL_SMTP_USERNAME=smtpusername
       - MAIL_SMTP_PASSWORD='smtppass'
       - MAIL_SENDER_ADDRESS=mail@example.com
