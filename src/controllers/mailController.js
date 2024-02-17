@@ -4,7 +4,7 @@ module.exports.verifyUserRegistration = async (user) => {
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_SMTP_HOST,
     port: process.env.MAIL_SMTP_PORT,
-    secure: false,
+    secure: process.env.MAIL_SMTP_SECURE,
     auth: {
       user: process.env.MAIL_SMTP_USERNAME,
       pass: process.env.MAIL_SMTP_PASSWORD,
@@ -36,7 +36,7 @@ module.exports.resetPassword = async (user) => {
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_SMTP_HOST,
     port: process.env.MAIL_SMTP_PORT,
-    secure: false,
+    secure: process.env.MAIL_SMTP_SECURE,
     auth: {
       user: process.env.MAIL_SMTP_USERNAME,
       pass: process.env.MAIL_SMTP_PASSWORD,
