@@ -50,7 +50,7 @@ const mongoUsername = process.env.MONGO_USERNAME;
 const mongoPassword = process.env.MONGO_PASSWORD;
 const mongoDB = `mongodb://${mongoUsername}:${mongoPassword}@${mongoHost}/origami`;
 
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //Get the default connection
 const db = mongoose.connection;
