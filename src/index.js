@@ -145,6 +145,7 @@ io.on('connection', async (socket) => {
   /* new impl (vir single) */
   socket.on('requestInitialAvatarPositionByVirApp', handleRequestInitialAvatarPositionByVirApp);
   socket.on('deliverInitialAvatarPositionByGeoApp', handleDeliverInitialAvatarPositionByGeoApp);
+  socket.on('closeVEGame', handleCloseVEGameWhenGameisfinished);
 
 
   /*-----------------------------*/
@@ -261,6 +262,13 @@ io.on('connection', async (socket) => {
     socket.to(clientRooms[socket.id]).emit('set avatar initial Position', { initialPosition: data['initialPosition'], initialRotation: data['initialRotation'], virEnvType: data['virEnvType'] });
 
     // console.log("-------\n\n")
+  }
+  /******************************************************/
+  /* Close webGL frame when game is finished */
+  function handleCloseVEGameWhenGameisfinished() {
+    // console.log("🚀 ~ handleDeliverInitialAvatarPositionByGeoApp ~ roomName:", data);
+
+    socket.to(clientRooms[socket.id]).emit('closeWebGLFrame');
   }
 
   //#endregion
