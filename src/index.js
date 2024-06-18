@@ -125,7 +125,7 @@ var virEnvMultiRoomName = "multiVirRoom"; // ToDo: update is to be automatic
 
 io.on('connection', async (socket) => {
   // Print
-  // console.log("Connection made!!!");
+  console.log("\n\n 🔌 Connection made successfully.");
 
   /* Functions' declaration */
   /* socket.on('checkAbilityToJoinGame', (gameDetail, callback) */
@@ -145,6 +145,23 @@ io.on('connection', async (socket) => {
   /* new impl (vir single) */
   socket.on('requestInitialAvatarPositionByVirApp', handleRequestInitialAvatarPositionByVirApp);
   socket.on('deliverInitialAvatarPositionByGeoApp', handleDeliverInitialAvatarPositionByGeoApp);
+  socket.on('closeVEGame', handleCloseVEGameWhenGameisfinished);
+
+  
+  socket.on("checkRoomNameExistance_v2", (gameCodeRecieved, callback) => {
+
+    let roomCode = gameCodeRecieved["gameCode"]; // game code is user name
+    // Check if room is created
+    if (io.sockets.adapter.rooms[roomCode]) {
+      callback({
+        roomStatus: true,
+      });
+    } else {
+      callback({
+        roomStatus: false,
+      });
+    }
+  });
 
 
   /*-----------------------------*/
@@ -261,6 +278,13 @@ io.on('connection', async (socket) => {
     socket.to(clientRooms[socket.id]).emit('set avatar initial Position', { initialPosition: data['initialPosition'], initialRotation: data['initialRotation'], virEnvType: data['virEnvType'] });
 
     // console.log("-------\n\n")
+  }
+  /******************************************************/
+  /* Close webGL frame when game is finished */
+  function handleCloseVEGameWhenGameisfinished() {
+    // console.log("🚀 ~ handleDeliverInitialAvatarPositionByGeoApp ~ roomName:", data);
+
+    socket.to(clientRooms[socket.id]).emit('closeWebGLFrame');
   }
 
   //#endregion
@@ -654,7 +678,7 @@ io.on('connection', async (socket) => {
   /* on disconnection */
   /********/
   socket.on('disconnect', function () {
-    // console.log("\n\n\n\n Disonnection!!");
+    console.log("\n\n 👋 Disonnection !!");
 
     /* update player status before disconnection */
     handleChangePlayerConnectionStauts("disconnected");
