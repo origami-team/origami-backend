@@ -149,20 +149,14 @@ io.on('connection', async (socket) => {
 
   
   socket.on("checkRoomNameExistance_v2", (gameCodeRecieved, callback) => {
-    console.log(
-      "🚀 (checkRoomNameExistance_v2) gameCodeRecieved: ",
-      gameCodeRecieved
-    );
 
     let roomCode = gameCodeRecieved["gameCode"]; // game code is user name
     // Check if room is created
     if (io.sockets.adapter.rooms[roomCode]) {
-      console.log("🚀 ~ socket.on ~ if:")
       callback({
         roomStatus: true,
       });
     } else {
-      console.log("🚀 ~ socket.on ~ else:")
       callback({
         roomStatus: false,
       });
