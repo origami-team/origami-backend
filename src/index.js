@@ -125,7 +125,7 @@ var virEnvMultiRoomName = "multiVirRoom"; // ToDo: update is to be automatic
 
 io.on('connection', async (socket) => {
   // Print
-  // console.log("Connection made!!!");
+  console.log("\n\n 🔌 Connection made successfully.");
 
   /* Functions' declaration */
   /* socket.on('checkAbilityToJoinGame', (gameDetail, callback) */
@@ -684,7 +684,7 @@ io.on('connection', async (socket) => {
   /* on disconnection */
   /********/
   socket.on('disconnect', function () {
-    // console.log("\n\n\n\n Disonnection!!");
+    console.log("\n\n 👋 Disonnection !!");
 
     /* update player status before disconnection */
     handleChangePlayerConnectionStauts("disconnected");
