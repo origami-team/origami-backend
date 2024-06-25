@@ -10,7 +10,17 @@ const getUserGames = async (req, res) => {
     let user = req.user;
 
     //* 2. Get user games
-    let userGames = await Game.find({ user: user._id })
+    let userGames = await Game.find({
+      $and: [
+        {
+          $or: [
+            { isVisible: { $eq: true } },
+            { isVisible: { $exists: false } },
+          ],
+        },
+        { user: user._id },
+      ],
+    })
       .select("_id")
       .select("name")
       .select("isVRWorld")

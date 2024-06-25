@@ -52,11 +52,21 @@ router.get(
         rolesWithGameAccess.some((role) => userCalling.roles.includes(role))
       ) {
         // temp update
-        const games = await Game.find().select("-user");
-        
+        const games = await Game.find({
+          $or: [
+            { isVisible: { $eq: true } },
+            { isVisible: { $exists: false } },
+          ],
+        }).select("-user");
+
         res.json(games);
       } else {
-        const games = await Game.find()
+        const games = await Game.find({
+          $or: [
+            { isVisible: { $eq: true } },
+            { isVisible: { $exists: false } },
+          ],
+        })
           .where("user")
           .equals(userCalling._id)
           .select("-user");
@@ -136,15 +146,13 @@ router.put(
   function (req, res, next) {
     User.findByIdAndUpdate(
       req.body._id,
-      {roles: [req.body.roles[0]]},
+      { roles: [req.body.roles[0]] },
       { new: true },
       function (err, post) {
         if (err) {
-          console.log("===error: ", err)
           return next(err);
         } else {
           res.json(post);
-          console.log("===post: ", post)
         }
       }
     );

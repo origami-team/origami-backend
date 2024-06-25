@@ -39,7 +39,7 @@ GameRouter.route("/").put(
   putGame
 );
 
-GameRouter.route("/:id").put(
+GameRouter.route("/delete/:id").put(
   passport.authenticate("jwt", { session: false }),
   deleteGame
 );

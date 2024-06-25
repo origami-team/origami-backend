@@ -8,6 +8,7 @@ const User = require("../../models/user");
 const deleteGame = async (req, res) => {
   try {
     let id = req.params.id;
+    // TODO: check if game is already deleted
     let gameToUpdate = await Game.findOne({ _id: id });
     const userCalling = await User.findOne({ _id: req.user._id });
     const rolesWithGameAccess = ["admin", "contentAdmin"];
@@ -18,7 +19,7 @@ const deleteGame = async (req, res) => {
     ) {
       const updatedGame = await Game.updateOne(
         { _id: id },
-        { $set: { isVisible: false } }
+        { $set: { isVisible: false } }  // here: it updates game visibility
       );
       return res.status(200).send({
         message: "Game successfully deleted.",
