@@ -13,6 +13,7 @@ const { getAllGamesWithLocs } = require("./getAllGamesWithLocs");
 const { getUserGames } = require("./getUserGames");
 const { postGame } = require("./postGame");
 const { putGame } = require("./putGame");
+const {deleteGame} = require("./deleteGame")
 
 GameRouter.route("/all").get(getAllGames);
 GameRouter.route("/allmultiplayer").get(getAllMultiplayerGames);
@@ -36,6 +37,11 @@ GameRouter.route("/").post(
 GameRouter.route("/").put(
   passport.authenticate("jwt", { session: false }),
   putGame
+);
+
+GameRouter.route("/:id").put(
+  passport.authenticate("jwt", { session: false }),
+  deleteGame
 );
 
 module.exports = GameRouter;

@@ -1,13 +1,14 @@
-const express = require("express");
-const mongoose = require("mongoose");
-
 const Game = require("../../models/game");
 const User = require("../../models/user");
 
-const putGame = async (req, res) => {
+/**
+ * Note: The implementation of deleting a game is only hiding it 
+ * by updating its visibilty
+ */
+const deleteGame = async (req, res) => {
   try {
-    const gameToUpdate = await Game.findOne({ _id: req.body._id });
-    // console.log(gameToUpdate);
+    let id = req.params.id;
+    let gameToUpdate = await Game.findOne({ _id: id });
     const userCalling = await User.findOne({ _id: req.user._id });
     const rolesWithGameAccess = ["admin", "contentAdmin"];
     // user is owner of the game or is admin / contentAdmin
@@ -16,11 +17,11 @@ const putGame = async (req, res) => {
       rolesWithGameAccess.some((role) => userCalling.roles.includes(role))
     ) {
       const updatedGame = await Game.updateOne(
-        { _id: req.body._id },
-        req.body
-      ).select("-user");
+        { _id: id },
+        { $set: { isVisible: false } }
+      );
       return res.status(200).send({
-        message: "Game successfully updated.",
+        message: "Game successfully deleted.",
         content: updatedGame,
       });
     } else {
@@ -33,5 +34,5 @@ const putGame = async (req, res) => {
 };
 
 module.exports = {
-  putGame,
+  deleteGame,
 };
