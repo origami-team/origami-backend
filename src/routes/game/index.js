@@ -29,16 +29,19 @@ GameRouter.route("/usergames").get(
   ]),
   getUserGames
 );
+// Get game by id
 GameRouter.route("/:id").get(getGame);
+// Create new game
 GameRouter.route("/").post(
   passport.authenticate("jwt", { session: false }),
   postGame
 );
+// Update game
 GameRouter.route("/").put(
   passport.authenticate("jwt", { session: false }),
   putGame
 );
-
+// Delete game
 GameRouter.route("/delete/:id").put(
   passport.authenticate("jwt", { session: false }),
   deleteGame
