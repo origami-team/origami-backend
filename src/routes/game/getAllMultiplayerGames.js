@@ -5,14 +5,27 @@ const Game = require("../../models/game");
 
 const getAllMultiplayerGames = async (req, res) => {
   try {
-
     // console.log("req.query: ", req.query);
     if ("minimal" in req.query) {
-
       // Get only multiplyer games
       let result = await Game.find({
-        "isMultiplayerGame": { $eq: true }
-      }).select("name").select("place").select("user").select("isVRWorld").select("isCuratedGame");
+        $and: [
+          {
+            $or: [
+              { isVisible: { $eq: true } },
+              { isVisible: { $exists: false } },
+            ],
+          },
+          {
+            isMultiplayerGame: { $eq: true },
+          },
+        ],
+      })
+        .select("name")
+        .select("place")
+        .select("user")
+        .select("isVRWorld")
+        .select("isCuratedGame");
 
       // console.log("minimal result", result);
       return res.status(200).send({
