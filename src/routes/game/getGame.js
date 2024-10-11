@@ -15,7 +15,7 @@ const getGame = async (req, res) => {
       ],
     }).select("-user");
 
-    console.log("🚀 ~ getGame ~ result:", result);
+    // console.log("🚀 ~ getGame ~ result:", result);
 
     // if game was delete (isVisible=false)
     if (result == null) {
