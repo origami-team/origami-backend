@@ -11,6 +11,9 @@ const helmet = require("helmet");
 const passport = require("passport");
 const cookieparser = require("cookie-parser");
 
+// needed only for testing backend database locally (check docs for further details)
+// require("dotenv").config();
+
 const accessLogStream = rfs("access.log", {
   interval: "1d", // rotate daily
   path: path.join(__dirname, "..", "log"),
@@ -135,7 +138,6 @@ io.on("connection", async (socket) => {
   socket.on("joinVEGame", handleJoinVEGame);
   socket.on("updateAvatarPosition", handleUpdateAvatarPosition);
   socket.on("updateAvatarDirection", handleUpdateAvatarDirection);
-  socket.on("checkRoomExistance", handleCheckRoomExistance);
 
   /* new impl (vir single) */
   socket.on(
@@ -166,7 +168,6 @@ io.on("connection", async (socket) => {
     }
   });
 
-
   /*-----------------------------*/
   /*-----------------------------*/
   /*-----------------------------*/
@@ -176,7 +177,7 @@ io.on("connection", async (socket) => {
 
   /* step 1: join game using geogami App  */
   function handleNewGame(gameCodeRecieved) {
-    // console.log("🤝🤝🤝 *********** (handle-join-game-GG-App)");
+    console.log("🤝🤝🤝 *********** (handle-join-game-GG-App)");
   
     let roomName = gameCodeRecieved["gameCode"];
     let virEnvType = gameCodeRecieved["virEnvType"];
@@ -197,35 +198,6 @@ io.on("connection", async (socket) => {
     clientRooms[socket.id] = roomName;
 
     // printNumRoomMembers(roomName); //Print number of members
-  }
-
-  /*******************************************************************************/
-  /* step 2:  V.E. check if room exists (game is opend using geogmai App) or not */
-  function handleCheckRoomExistance(gameCodeRecieved) {
-    // console.log("---- gameCodeRecieved: ", gameCodeRecieved);
-
-    let roomCode = gameCodeRecieved["gameCode"]; // game-code here is user name
-    // Check if room is created
-    if (io.sockets.adapter.rooms[roomCode]) {
-      // // console.log("Info: Room exist!!");
-      // // console.log("Info: Room exist!! roomVRWorldType[roomCode]: ", roomVRWorldType[roomCode]);
-      // console.log("Info: Room exist!!111 roomCode: ", roomCode);
-      /* send back room code and V.E. type */
-      io.emit('checkRoomExistance', {
-        roomCode: roomCode,
-        roomStatus: true,
-        virEnvType: roomVRWorldType_Mode[roomCode]['virEnvType'],
-        isSingleMode: roomVRWorldType_Mode[roomCode]['isSingleMode']
-      })
-      // console.log("Info: Room exist!!222 roomCode: ", roomCode);
-      // console.log("-------\n\n")
-    } else {
-      // console.log("Warning: Room doesn't exist!!!??");
-      io.emit('checkRoomExistance', {
-        roomCode: roomCode,
-        roomStatus: false
-      })
-    }
   }
 
   /****************************************/
@@ -498,10 +470,8 @@ io.on("connection", async (socket) => {
     }
   }
 
-  /* update game track status */
-  /*********************/
   /**
-   * update game track status
+   * Update game track status.
    * This function is called when multi-player game track-data is not stoerd in server yet, 
    * to ensure that all players stroe their tracks in one file in the cloud. After storing track-data of first player the app will update existintg file in server.
    * 
@@ -554,7 +524,6 @@ io.on("connection", async (socket) => {
   /*------------------------------*/
   /*-----------------------------*/
 
-
   /*-----------------------------*/
   /*-----------------------------*/
   /*******************************/
@@ -589,7 +558,6 @@ io.on("connection", async (socket) => {
       }
     }
     // console.log('(player connect)_3, Done-player connect--//');
-
   });
 
   /*********************************/
@@ -615,11 +583,17 @@ io.on("connection", async (socket) => {
     virEnvClientsData[virEnvMultiRoomName] = virEnvClients;
 
     /* store player name and no, to be able to update avatar position and turn */
-    socket[socket.id] = { playerName: currentPlayer.name, playerNo: currentPlayer.playerNo };
+    socket[socket.id] = {
+      playerName: currentPlayer.name,
+      playerNo: currentPlayer.playerNo,
+    };
 
     /* Join player to temp static multiplayer vir room */
     /* Join (multi V.E. from Vir. app) player to room */
 
+    console.log(
+      "🤝-🤝-🤝 *********** (play) (handle-join-game-VE-To-static-room-VE-only)"
+    );
     socket.join(virEnvMultiRoomName);
 
     // in your current game, tell you that you have joined
@@ -627,35 +601,35 @@ io.on("connection", async (socket) => {
     /*  */
     /* step 3: prepare current player avatar in unitly app*/
     // socket.emit('play', currentPlayer);
-    io.to(socket.id).emit('play', currentPlayer);
+    io.to(socket.id).emit("prepareOwnAvatar", currentPlayer);
 
     /* step 4: notify other players in room except sender that a new player has joined */
-    // socket.broadcast.emit('other player connected', currentPlayer);
-    socket.to(virEnvMultiRoomName).emit('other player connected', currentPlayer);
-
+    socket
+      .to(virEnvMultiRoomName)
+      .emit("other player connected", currentPlayer);
   });
 
   /*************/
   /* this fun. will update other avatars' positions every few seconds, 
     in case there's an offset  */
-  socket.on('player move', function (data) {
-    // console.log('🚀(player move) data:', data);
+  socket.on("update_others_avatars_positions_periodically", function (data) {
+    console.log("🚀🚀🚀 ~ update_others_avatars_positions_periodically:", data);
+    data = JSON.parse(data);
 
-    let virEnvClients = (virEnvClientsData[virEnvMultiRoomName] ? virEnvClientsData[virEnvMultiRoomName] : []);
+    let virEnvClients = virEnvClientsData[virEnvMultiRoomName]
+      ? virEnvClientsData[virEnvMultiRoomName]
+      : [];
 
     /* identify current player using stored player no */
     if (socket[socket.id] && virEnvClients[socket[socket.id]["playerNo"]]) {
-
       currentPlayer = virEnvClients[socket[socket.id]["playerNo"]];
 
       currentPlayer.position = data.position;
 
-      socket.broadcast.to(virEnvMultiRoomName).emit('player move', currentPlayer);      // except sender
-
-      // console.log('*******(player move), move by: ' + currentPlayer.name);
+      socket
+        .to(virEnvMultiRoomName)
+        .emit("update_others_avatars_position", currentPlayer); // except sender
     }
-
-
   });
 
   /*************/
@@ -677,10 +651,11 @@ io.on("connection", async (socket) => {
 
       // test - check how many players are conncted
       // console.log(" update avatar walk - Number of Room: ", virEnvMultiRoomName," Members: ", io.sockets.adapter.rooms[virEnvMultiRoomName].length);
-      /* To update other users' avatar positions */
-      socket.to(virEnvMultiRoomName).emit('update avatar walk', currentPlayer);
 
-      // console.log('🚀(player walk) virEnvClients[currentPlayer.playerNo].position', virEnvClients[currentPlayer.playerNo].position, ', by: ' + currentPlayer.name);
+      /* To update other users' avatar positions */
+      socket
+        .to(virEnvMultiRoomName)
+        .emit("update others avatars walk", currentPlayer);
     }
   });
 
@@ -707,18 +682,6 @@ io.on("connection", async (socket) => {
     }
   });
 
-
-  // check it out: not used
-  socket.on('player turn', function (data) {
-    // console.log('🚀(player turn) ');
-    //// console.log('recv: turn: '+JSON.stringify(data));
-    // update it -> socket.broadcast.emit
-    io.emit('updateAvatarDirection', { angleValue: data["rotation"][1] })
-    currentPlayer.rotation = data.rotation;
-
-    //socket.broadcast.emit('player turn', currentPlayer);
-  });
-
   //#endregion
   /* End of multiplayer Vir. Env. functions */
   /********************************/
@@ -738,7 +701,6 @@ io.on("connection", async (socket) => {
     /* update player status before disconnection */
     handleChangePlayerConnectionStauts("disconnected");
   });
-
 });
 //VR world */
 //#endregion
