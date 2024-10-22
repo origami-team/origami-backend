@@ -149,7 +149,8 @@ io.on("connection", async (socket) => {
     handleDeliverInitialAvatarPositionByGeoApp
   );
   socket.on("closeVEGame", handleCloseVEGameWhenGameisfinished);
-  
+  socket.on("removeOwnAvatar", handleRemovePlayerAvatar);
+
   /**
    * This function is used in VE games to prevent more than one player from having same name.
    * which avoid any conflicts in trasfering avatar data between app and virtual-env
@@ -178,7 +179,7 @@ io.on("connection", async (socket) => {
   /* step 1: join game using geogami App  */
   function handleNewGame(gameCodeRecieved) {
     console.log("🤝🤝🤝 *********** (handle-join-game-GG-App)");
-  
+
     let roomName = gameCodeRecieved["gameCode"];
     let virEnvType = gameCodeRecieved["virEnvType"];
     let isSingleMode = gameCodeRecieved["isSingleMode"];
@@ -265,7 +266,7 @@ io.on("connection", async (socket) => {
     });
   }
   /******************************************************/
-  /* Close webGL frame when game is finished */
+  /* Close webGL frame when game is finished single and multi */
   function handleCloseVEGameWhenGameisfinished() {
     socket.to(clientRooms[socket.id]).emit("closeWebGLFrame");
   }
@@ -434,7 +435,7 @@ io.on("connection", async (socket) => {
       "🚀(handleChangePlayerConnectionStauts) connStatus: ",
       connStatus
     );
-    
+
     if (socket.playerData) {
       let roomName = socket.playerData["roomName"];
       let playerNo = socket.playerData["playerNo"];
@@ -472,10 +473,10 @@ io.on("connection", async (socket) => {
 
   /**
    * Update game track status.
-   * This function is called when multi-player game track-data is not stoerd in server yet, 
+   * This function is called when multi-player game track-data is not stoerd in server yet,
    * to ensure that all players stroe their tracks in one file in the cloud. After storing track-data of first player the app will update existintg file in server.
-   * 
-   * @param {*} data 
+   *
+   * @param {*} data
    */
   function handleUpdateGameTrackStauts(data) {
     let teacherGameCode = data["roomName"];
@@ -518,8 +519,19 @@ io.on("connection", async (socket) => {
     });
   }
 
+  /**
+   * This function removes inactive (disconnected / finsihed game) avatar
+   * For multi-player only
+   * @param {*} data {playerName: playerName}
+   */
+  function handleRemovePlayerAvatar(data) {
+    socket
+      .to(virEnvMultiRoomName)
+      .emit("removeOtherPlayersAvatars", { name: data["playerName"] }); // except sender
+  }
+
   //#endregion
-  /* End of multiplayer functions */
+  /* End of multiplayer functions - from GeoGami App side */
   /********************************/
   /*------------------------------*/
   /*-----------------------------*/
