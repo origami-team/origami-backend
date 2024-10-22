@@ -439,7 +439,11 @@ io.on("connection", async (socket) => {
     if (socket.playerData) {
       let roomName = socket.playerData["roomName"];
       let playerNo = socket.playerData["playerNo"];
-      // let playerName = socket.playerData['playerName']
+      let playerName = socket.playerData['playerName']
+
+      // Hide/show avatar object in other players envs when disconnected/reconnected
+      hideShowOtherPlayersAvatars(playerName);
+
       console.log(
         "🚀(handleChangePlayerConnectionStauts) player: ",
         roomName,
@@ -528,6 +532,15 @@ io.on("connection", async (socket) => {
     socket
       .to(virEnvMultiRoomName)
       .emit("removeOtherPlayersAvatars", { name: data["playerName"] }); // except sender
+  }
+
+  /**
+   * To hide/show other players avatar when disconnected/reconnected
+   */
+  function hideShowOtherPlayersAvatars(playerName){
+    socket
+      .to(virEnvMultiRoomName)
+      .emit("hideShowOtherPlayersAvatars", { name: playerName });
   }
 
   //#endregion
