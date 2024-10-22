@@ -8,7 +8,7 @@ const getAllGames = async (req, res) => {
     if ("minimal" in req.query) {
       let result;
       // allow only content-admin to get multiplayer games
-      if ("contentAdmin" in req.query) {
+      if ("registeredUser" in req.query) {
         // get all games
         result = await Game.find({
           $or: [
