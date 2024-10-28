@@ -638,7 +638,7 @@ io.on("connection", async (socket) => {
   /* this fun. will update other avatars' positions every few seconds, 
     in case there's an offset  */
   socket.on("update_others_avatars_positions_periodically", function (data) {
-    console.log("🚀🚀🚀 ~ update_others_avatars_positions_periodically:", data);
+    // console.log("🚀🚀🚀 ~ update_others_avatars_positions_periodically:", data);
     data = JSON.parse(data);
 
     let virEnvClients = virEnvClientsData[virEnvMultiRoomName]
