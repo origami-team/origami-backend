@@ -200,6 +200,16 @@ module.exports.authenticate = async function authenticate(req, res, next) {
     // throw new Error("User and or password not valid!");
   }
 
+
+  // To check if email is already verified before allowing user to login
+  const emailIsConfirmed = user.emailIsConfirmed;
+  if(!emailIsConfirmed){
+    return res.send(401, {
+      code: "Unauthorized",
+      message: "Please verify your email address to activate your account.",
+    });
+  }
+
   if (await user.checkPassword(password)) {
     const { token, refreshToken } = await createToken(user);
 
