@@ -136,20 +136,19 @@ exports.changeMail = async function changeMail(req, res, next) {
 };
 
 module.exports.confirmEmail = async function confirmEmail(req, res, next) {
-  console.log(req);
+  // console.log(req);
   try {
-    const user = await User.confirmEmail(req.query.token);
-    if (user) {
-      res.send(200, {
-        code: "ok",
-        message: "E-Mail successfully confirmed. Thank you",
-      });
-    } else {
-      res.send(422, { code: "error", message: "can not confirm email" });
+    const {user, emailIsAlreadyConfirmed} = await User.confirmEmail(req.query.token);
+    
+    if (emailIsAlreadyConfirmed) {
+      res.redirect(`${process.env.APP_URL}/user/login?emailStatus=Your email address is already verified. You may now log in.&msgType=success`);
+    } 
+    else {
+      res.redirect(`${process.env.APP_URL}/user/login?emailStatus=Email address successfully verified.&msgType=success`);
     }
   } catch (err) {
     console.info(err);
-    res.send(422, { code: "error", message: "Email can not be confirmed" });
+    res.redirect(`${process.env.APP_URL}/user/login?emailStatus=Your email confirmation link is invalid. Please attempt to create an account with this email address, again.&msgType=warning`);
   }
 };
 
@@ -198,6 +197,16 @@ module.exports.authenticate = async function authenticate(req, res, next) {
       message: "Wrong username or password",
     });
     // throw new Error("User and or password not valid!");
+  }
+
+
+  // To check if email is already verified before allowing user to login
+  const emailIsConfirmed = user.emailIsConfirmed;
+  if(!emailIsConfirmed){
+    return res.send(401, {
+      code: "Unauthorized",
+      message: "Please verify your email address to activate your account.",
+    });
   }
 
   if (await user.checkPassword(password)) {

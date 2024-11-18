@@ -114,6 +114,7 @@ module.exports.changePassword = function (password, user, callback) {
   });
 };
 
+// return user only if not confirmed yet or already confirmed. Run only when email verification link is used.
 module.exports.confirmEmail = function (token) {
   console.log("confirming user with token", token);
   return User.findOne({
@@ -130,10 +131,18 @@ module.exports.confirmEmail = function (token) {
       // set email to email address from request
       // user.set("email", email);
       // mark user as confirmed
-      user.set("emailConfirmationToken", undefined);
+
+      // if email is already confirmed
+      if(user.emailIsConfirmed){
+        return {user, emailIsAlreadyConfirmed: true};
+      }
+
+      // never delete email confirmation token to find user based on token if email is already verified (11.24)
+      // user.set("emailConfirmationToken", undefined);
       user.set("emailIsConfirmed", true);
       user.set("unconfirmedEmail", undefined);
-      return user.save();
+      
+      return {user: user.save(), emailIsAlreadyConfirmed: false};
 
       // User.updateMany({unconfirmedEmail: email}, {unconfirmedEmail: null} ,function(err, users){
 
