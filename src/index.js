@@ -151,6 +151,9 @@ io.on("connection", async (socket) => {
   socket.on("closeVEGame", handleCloseVEGameWhenGameisfinished);
   socket.on("removeOwnAvatar", handleRemovePlayerAvatar);
 
+  // ping-pong impl. to keep *single-player* game alive even when no interactions were made for more than a minute
+  socket.on("pingServer", ping);
+
   /**
    * This function is used in VE games to prevent more than one player from having same name.
    * which avoid any conflicts in trasfering avatar data between app and virtual-env
@@ -170,11 +173,15 @@ io.on("connection", async (socket) => {
   });
 
   /*-----------------------------*/
-  /*-----------------------------*/
-  /*-----------------------------*/
   /*******************************/
   /* Start single player V.E. functions */
   //#region
+
+  // To keep single-player game alive and avoid disconnecting after about 45 secs
+  // there was a need to add this ping/pong function
+  function ping(gameCode) {
+    console.log("🚀 ~ server has been pinged by:", gameCode);
+  }
 
   /* step 1: join game using geogami App  */
   function handleNewGame(gameCodeRecieved) {
@@ -275,10 +282,7 @@ io.on("connection", async (socket) => {
   /* End of single player V.E. functions */
   /****************************************/
   /*--------------------------------------*/
-  /*--------------------------------------*/
-  /*--------------------------------------*/
 
-  /*-----------------------------*/
   /*-----------------------------*/
   /*******************************/
   /* multiplayer functions - from GeoGami App side */
@@ -439,7 +443,7 @@ io.on("connection", async (socket) => {
     if (socket.playerData) {
       let roomName = socket.playerData["roomName"];
       let playerNo = socket.playerData["playerNo"];
-      let playerName = socket.playerData['playerName']
+      let playerName = socket.playerData["playerName"];
 
       // Hide/show avatar object in other players envs when disconnected/reconnected
       hideShowOtherPlayersAvatars(playerName);
@@ -537,7 +541,7 @@ io.on("connection", async (socket) => {
   /**
    * To hide/show other players avatar when disconnected/reconnected
    */
-  function hideShowOtherPlayersAvatars(playerName){
+  function hideShowOtherPlayersAvatars(playerName) {
     socket
       .to(virEnvMultiRoomName)
       .emit("hideShowOtherPlayersAvatars", { name: playerName });
@@ -546,10 +550,8 @@ io.on("connection", async (socket) => {
   //#endregion
   /* End of multiplayer functions - from GeoGami App side */
   /********************************/
-  /*------------------------------*/
   /*-----------------------------*/
 
-  /*-----------------------------*/
   /*-----------------------------*/
   /*******************************/
   /* Multiplayer functions - from Vir.Env. App side */
@@ -711,7 +713,6 @@ io.on("connection", async (socket) => {
   /* End of multiplayer Vir. Env. functions */
   /********************************/
   /*------------------------------*/
-  /*-----------------------------*/
 
   // Helping functions
   function printNumRoomMembers(roomName) {
