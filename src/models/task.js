@@ -34,6 +34,12 @@ const TaskSchema = new mongoose.Schema(
     virEnvType: {
       type: String,
     },
+    isVEBuilding: {
+      type: Boolean,
+    },
+    floor: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
