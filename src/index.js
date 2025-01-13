@@ -272,7 +272,8 @@ io.on("connection", async (socket) => {
       initialRotation: data["initialRotation"],
       virEnvType: data["virEnvType"],
       avatarSpeed: data["avatarSpeed"],
-      showEnvSettings: data["showEnvSettings"]
+      showEnvSettings: data["showEnvSettings"],
+      initialAvatarHeight: data["initialAvatarHeight"]
     });
   }
   /******************************************************/
