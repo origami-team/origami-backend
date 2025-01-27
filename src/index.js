@@ -241,7 +241,8 @@ io.on("connection", async (socket) => {
   function handleUpdateAvatarPosition(avatarPosition) {
     socket.to(avatarPosition["gameCode"]).emit("updateAvatarPosition", {
       x: avatarPosition["x_axis"],
-      z: avatarPosition["y_axis"],
+      z: avatarPosition["z_axis"],
+      y: avatarPosition["y_axis"],
     });
   }
 
@@ -271,7 +272,8 @@ io.on("connection", async (socket) => {
       initialRotation: data["initialRotation"],
       virEnvType: data["virEnvType"],
       avatarSpeed: data["avatarSpeed"],
-      showEnvSettings: data["showEnvSettings"]
+      showEnvSettings: data["showEnvSettings"],
+      initialAvatarHeight: data["initialAvatarHeight"]
     });
   }
   /******************************************************/
