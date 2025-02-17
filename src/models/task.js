@@ -40,6 +40,9 @@ const TaskSchema = new mongoose.Schema(
     floor: {
       type: String,
     },
+    initialFloor: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
