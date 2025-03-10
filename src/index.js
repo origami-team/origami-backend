@@ -273,7 +273,8 @@ io.on("connection", async (socket) => {
       virEnvType: data["virEnvType"],
       avatarSpeed: data["avatarSpeed"],
       showEnvSettings: data["showEnvSettings"],
-      initialAvatarHeight: data["initialAvatarHeight"]
+      initialAvatarHeight: data["initialAvatarHeight"],
+      arrowDestination: data["arrowDestination"]
     });
   }
   /******************************************************/
