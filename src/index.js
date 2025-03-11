@@ -150,6 +150,7 @@ io.on("connection", async (socket) => {
   );
   socket.on("closeVEGame", handleCloseVEGameWhenGameisfinished);
   socket.on("removeOwnAvatar", handleRemovePlayerAvatar);
+  socket.on("updateArrowDirection", handleUpdateArrowDirection);
 
   // ping-pong impl. to keep *single-player* game alive even when no interactions were made for more than a minute
   socket.on("pingServer", ping);
@@ -277,6 +278,20 @@ io.on("connection", async (socket) => {
       arrowDestination: data["arrowDestination"]
     });
   }
+
+  /**
+   * Update arrow direction (only for arrow-tasks in VE)
+   * It sends nearest point to avatar which is updated periodiaclly based on avatar movement
+   * From VE app to Geogami app
+   */
+  function handleUpdateArrowDirection(data) {
+    socket.to(clientRooms[socket.id]).emit("set next arrow point and distance", {
+      x: data["x_axis"],
+      z: data["z_axis"],
+      distance: data["distance"],
+    });
+  }
+
   /******************************************************/
   /* Close webGL frame when game is finished single and multi */
   function handleCloseVEGameWhenGameisfinished() {
