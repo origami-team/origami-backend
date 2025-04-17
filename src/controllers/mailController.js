@@ -12,10 +12,12 @@ module.exports.verifyUserRegistration = async (user) => {
   });
 
   let link = "";
+  // Note: user id was added to `verification link` to identify user when email is already verified.
   if (process.env.NODE_ENV === "production") {
-    link = `${process.env.API_URL}/user/confirm-email?token=${user.emailConfirmationToken}`;
+    link = `${process.env.API_URL}/user/confirm-email?id=${user._id}&token=${user.emailConfirmationToken}`;
   } else {
-    link = `${process.env.API_URL}:${process.env.API_PORT}/user/confirm-email?token=${user.emailConfirmationToken}`;
+    link = `${process.env.API_URL}:${process.env.API_PORT}/user/confirm-email?id=${user._id}&
+    token=${user.emailConfirmationToken}`;
   }
 
   // send mail with defined transport object

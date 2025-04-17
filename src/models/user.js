@@ -49,7 +49,7 @@ const UserSchema = mongoose.Schema(
     },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
-    emailConfirmationToken: { type: String, default: uuidv4() },
+    emailConfirmationToken: { type: String, default: () => uuidv4() },
     unconfirmedEmail: { type: String },
     emailIsConfirmed: { type: Boolean, default: false, required: true },
     refreshToken: { type: String },
@@ -115,10 +115,10 @@ module.exports.changePassword = function (password, user, callback) {
 };
 
 // return user only if not confirmed yet or already confirmed. Run only when email verification link is used.
-module.exports.confirmEmail = function (token) {
+module.exports.confirmEmail = function (id, token) {
   console.log("confirming user with token", token);
   return User.findOne({
-    emailConfirmationToken: token,
+    _id: id,
   })
     .exec()
     .then(function (user) {
@@ -137,8 +137,7 @@ module.exports.confirmEmail = function (token) {
         return {user, emailIsAlreadyConfirmed: true};
       }
 
-      // never delete email confirmation token to find user based on token if email is already verified (11.24)
-      // user.set("emailConfirmationToken", undefined);
+      user.set("emailConfirmationToken", undefined);
       user.set("emailIsConfirmed", true);
       user.set("unconfirmedEmail", undefined);
       

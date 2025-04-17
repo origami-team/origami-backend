@@ -138,7 +138,7 @@ exports.changeMail = async function changeMail(req, res, next) {
 module.exports.confirmEmail = async function confirmEmail(req, res, next) {
   // console.log(req);
   try {
-    const {user, emailIsAlreadyConfirmed} = await User.confirmEmail(req.query.token);
+    const {user, emailIsAlreadyConfirmed} = await User.confirmEmail(req.query.id, req.query.token);
     
     if (emailIsAlreadyConfirmed) {
       res.redirect(`${process.env.APP_URL}/user/login?emailStatus=Your email address is already verified. You may now log in.&msgType=success`);
