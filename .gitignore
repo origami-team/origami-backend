@@ -2,7 +2,6 @@ keys
 log
 terraform
 db
-docker-compose.yml
 backup.sh
 package-lock.json
 .vscode

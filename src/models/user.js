@@ -79,12 +79,12 @@ UserSchema.methods.checkPassword = function checkPassword(plaintextPassword) {
 const User = (module.exports = mongoose.model("User", UserSchema));
 
 module.exports.getUserById = function (id, callback) {
-  User.findById(id).exec(callback);
+  User.findById(id).then(callback);
 };
 
 module.exports.getUserByUsername = function (username, callback) {
   const query = { username: username };
-  User.findOne(query).exec(callback);
+  User.findOne(query).then(callback);
 };
 
 module.exports.addUser = function (newUser, callback) {
@@ -92,7 +92,7 @@ module.exports.addUser = function (newUser, callback) {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
       if (err) throw err;
       newUser.password = hash;
-      newUser.save(callback);
+      newUser.save().then(callback);
     });
   });
 };
@@ -109,7 +109,7 @@ module.exports.changePassword = function (password, user, callback) {
     bcrypt.hash(password, salt, (err, hash) => {
       if (err) throw err;
       user.password = hash;
-      user.save(callback);
+      user.save().then(callback);
     });
   });
 };

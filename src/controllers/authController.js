@@ -385,7 +385,7 @@ module.exports.register = function register(req, res, next) {
           msg: indexName + " already exists! ",
         });
       } else {
-        return res.send(400, { success: false, msg: "Failed to register" });
+        return res.status(400).send({ success: false, msg: "Failed to register", error: err })
       }
     } else {
       await verifyUserRegistration(user);
