@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package.json /app
 RUN yarn
 COPY ./src /app/src
-CMD yarn start
+CMD ["yarn", "start"]
 EXPOSE 3000
