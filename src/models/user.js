@@ -92,7 +92,7 @@ module.exports.addUser = function (newUser, callback) {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
       if (err) throw err;
       newUser.password = hash;
-      newUser.save().then(callback);
+      newUser.save().then(data => callback(null, data)).catch(err => callback(err, null))
     });
   });
 };
