@@ -1,15 +1,33 @@
 const nodemailer = require("nodemailer");
 
+ let transporter;
+
+  if (process.env.NODE_ENV === 'development') {
+    transporter = {
+      sendMail: async (mail) => {
+        console.log('\n=== Mock Email Sent ===');
+        console.log(`To: ${mail.to}`);
+        console.log(`Subject: ${mail.subject}`);
+        console.log(`Text: ${mail.text}`);
+        console.log(`HTML:\n${mail.html}`);
+        console.log('=======================\n');
+        return Promise.resolve();
+      }
+    };
+  } else {
+    transporter = nodemailer.createTransport({
+      host: process.env.MAIL_SMTP_HOST,
+      port: process.env.MAIL_SMTP_PORT,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_SMTP_USERNAME,
+        pass: process.env.MAIL_SMTP_PASSWORD,
+      },
+    });
+  }
+
+
 module.exports.verifyUserRegistration = async (user) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_SMTP_HOST,
-    port: process.env.MAIL_SMTP_PORT,
-    secure: false,
-    auth: {
-      user: process.env.MAIL_SMTP_USERNAME,
-      pass: process.env.MAIL_SMTP_PASSWORD,
-    },
-  });
 
   let link = "";
   // Note: user id was added to `verification link` to identify user when email is already verified.
@@ -31,19 +49,10 @@ module.exports.verifyUserRegistration = async (user) => {
     <p>Liebe Grüße / Best wishes<br>GeoGami Team</p>`,
   });
 
-  console.log("Message sent: %s", info.messageId);
+  // console.log("Message sent: %s", info.messageId);
 };
 
 module.exports.resetPassword = async (user) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_SMTP_HOST,
-    port: process.env.MAIL_SMTP_PORT,
-    secure: false,
-    auth: {
-      user: process.env.MAIL_SMTP_USERNAME,
-      pass: process.env.MAIL_SMTP_PASSWORD,
-    },
-  });
 
   let link = "";
   if (process.env.NODE_ENV === "production") {
@@ -70,5 +79,5 @@ module.exports.resetPassword = async (user) => {
     <p>Best wishes <br> GeoGami Team</p>`,
   });
 
-  console.log("Message sent: %s", info.messageId);
+  // console.log("Message sent: %s", info.messageId);
 };
