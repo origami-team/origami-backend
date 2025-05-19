@@ -14,16 +14,6 @@ mongoose.connect(mongoDB, {
   useUnifiedTopology: true,
 });
 
-const connection = mongoose.connection;
-
-let uploader;
-
-connection.once("open", () => {
-  uploader = new GridFSBucket(connection.db, {
-    bucketName: "uploads",
-  });
-});
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single("file");
 
@@ -36,8 +26,13 @@ function writeFileToGridFS(bucket, filename, contentType, metadata, buffer) {
 
     uploadStream.end(buffer);
 
-    uploadStream.on("error", (error) => reject(error));
-    uploadStream.on("finish", (file) => resolve(file));
+    uploadStream.on("error", (error) => {
+      console.error("GridFS upload error:", error);
+      reject(error);
+    });
+    uploadStream.on("finish", async () => {
+      resolve(uploadStream.filename);
+    });
   });
 }
 
@@ -59,10 +54,15 @@ const uploadFilesMiddleware = async (req, res, next) => {
     else if (audioMatch.includes(file.mimetype)) bucketName = "audios";
     else if (videoMatch.includes(file.mimetype)) bucketName = "videos";
 
+    // Create a GridFSBucket for the correct bucketName
+    const bucket = new GridFSBucket(mongoose.connection.db, {
+      bucketName,
+    });
+
     const filename = `${Date.now()}-origami-${file.originalname}`;
 
     const savedFile = await writeFileToGridFS(
-      uploader,
+      bucket,
       filename,
       file.mimetype,
       { bucket: bucketName },

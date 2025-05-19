@@ -2,7 +2,7 @@ const upload = require("../middleware/upload");
 
 const uploadFile = async (req, res) => {
   try {
-    await upload(req, res)
+    const savedFile = await upload(req, res)
 
     if (req.file == undefined) {
       return res.send(`You must select a file.`);
@@ -11,7 +11,7 @@ const uploadFile = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     return res.json({
       message: "File has been uploaded.",
-      filename: req.file.filename
+      filename: savedFile
     });
   } catch (error) {
     console.log(error);
