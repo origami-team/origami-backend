@@ -145,15 +145,10 @@ router.put(
     User.findByIdAndUpdate(
       req.body._id,
       { roles: [req.body.roles[0]] },
-      { new: true },
-      function (err, post) {
-        if (err) {
-          return next(err);
-        } else {
-          res.json(post);
-        }
-      }
-    );
+      { new: true }
+    )
+      .then((post) => res.json(post))
+      .catch((err) => next(err));
   }
 );
 
