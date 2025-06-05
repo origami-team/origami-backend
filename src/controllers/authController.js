@@ -15,21 +15,21 @@ exports.roleAuthorization = function (roles) {
   return function (req, res, next) {
     var user = req.user;
 
-    User.findById(user._id, function (err, foundUser) {
-      if (err) {
+    User.findById(user._id)
+      .then((foundUser) => {
+
+        if (foundUser.roles.some((role) => roles.includes(role))) {
+          return next();
+        }
+
+        res.status(401).json({ error: "You are not authorized to view this content" });
+        return next("Unauthorized");
+      })
+      .catch((err) => {
+        console.error("Error finding user:", err);
         res.status(422).json({ error: "No user found." });
         return next(err);
-      }
-
-      if (foundUser.roles.some((role) => roles.includes(role))) {
-        return next();
-      }
-
-      res
-        .status(401)
-        .json({ error: "You are not authorized to view this content" });
-      return next("Unauthorized");
-    });
+      });
   };
 };
 

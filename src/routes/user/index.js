@@ -104,11 +104,9 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
-    // if (req.query.user )
-    User.find(function (err, users) {
-      if (err) return next(err);
-      res.json(users);
-    });
+    User.find()
+      .then((users) => res.json(users))
+      .catch((err) => next(err));
   }
 );
 
