@@ -176,10 +176,9 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
-    User.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-      if (err) return next(err);
-      res.json(post);
-    });
+    User.findByIdAndRemove(req.params.id, req.body)
+      .then((post) => res.json(post))
+      .catch((err) => next(err));
   }
 );
 
