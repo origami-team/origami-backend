@@ -243,11 +243,12 @@ module.exports.changeMail = function changeMail(user, mail) {
 };
 
 module.exports.deleteUser = function (user) {
-  return User.remove({ _id: user._id })
-    .exec()
-    .then(function (user) {
-      if (!user) {
-        throw new Error("Can not delete this user", { type: "ForbiddenError" });
+  return User.deleteOne({ _id: user._id })
+    .then((result) =>{
+      if (result.deletedCount === 0) {
+        const error = new Error("Cannot delete this user");
+        error.type = "ForbiddenError";
+        throw error;
       }
       return "User removed";
     });

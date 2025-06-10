@@ -104,11 +104,9 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
-    // if (req.query.user )
-    User.find(function (err, users) {
-      if (err) return next(err);
-      res.json(users);
-    });
+    User.find()
+      .then((users) => res.json(users))
+      .catch((err) => next(err));
   }
 );
 
@@ -147,15 +145,10 @@ router.put(
     User.findByIdAndUpdate(
       req.body._id,
       { roles: [req.body.roles[0]] },
-      { new: true },
-      function (err, post) {
-        if (err) {
-          return next(err);
-        } else {
-          res.json(post);
-        }
-      }
-    );
+      { new: true }
+    )
+      .then((post) => res.json(post))
+      .catch((err) => next(err));
   }
 );
 
@@ -183,10 +176,9 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   AuthController.roleAuthorization(["admin", "contentAdmin"]),
   function (req, res, next) {
-    User.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-      if (err) return next(err);
-      res.json(post);
-    });
+    User.findByIdAndRemove(req.params.id, req.body)
+      .then((post) => res.json(post))
+      .catch((err) => next(err));
   }
 );
 

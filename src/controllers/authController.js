@@ -15,21 +15,21 @@ exports.roleAuthorization = function (roles) {
   return function (req, res, next) {
     var user = req.user;
 
-    User.findById(user._id, function (err, foundUser) {
-      if (err) {
+    User.findById(user._id)
+      .then((foundUser) => {
+
+        if (foundUser.roles.some((role) => roles.includes(role))) {
+          return next();
+        }
+
+        res.status(401).json({ error: "You are not authorized to view this content" });
+        return next("Unauthorized");
+      })
+      .catch((err) => {
+        console.error("Error finding user:", err);
         res.status(422).json({ error: "No user found." });
         return next(err);
-      }
-
-      if (foundUser.roles.some((role) => roles.includes(role))) {
-        return next();
-      }
-
-      res
-        .status(401)
-        .json({ error: "You are not authorized to view this content" });
-      return next("Unauthorized");
-    });
+      });
   };
 };
 
@@ -80,8 +80,8 @@ exports.deleteUserAccount = async function deleteUserAccount(req, res, next) {
     // Find user in db by username
     const user = await User.findOne({ username: req.body.username }).exec();
     if (user){
-      console.log("User successfully deleted")
       await User.deleteUser(req.body);
+      console.log("User successfully deleted");
       res.send(200, {
         code: "Ok",
         message:
@@ -92,7 +92,8 @@ exports.deleteUserAccount = async function deleteUserAccount(req, res, next) {
       res.send(404, { code: "No user found!" });
     }
   } catch (err) {
-    res.send(200, err);
+    console.error("Error deleting user:", err);
+    res.status(500).send(err);
   }
 };
 
@@ -212,7 +213,7 @@ module.exports.authenticate = async function authenticate(req, res, next) {
   if (await user.checkPassword(password)) {
     const { token, refreshToken } = await createToken(user);
 
-    return res.send(200, {
+    return res.status(200).send({
       code: "Authorized",
       message: "Successfully signed in",
       user: user,
