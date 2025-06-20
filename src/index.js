@@ -275,7 +275,9 @@ io.on("connection", async (socket) => {
       avatarSpeed: data["avatarSpeed"],
       showEnvSettings: data["showEnvSettings"],
       initialAvatarHeight: data["initialAvatarHeight"],
-      arrowDestination: data["arrowDestination"]
+      arrowDestination: data["arrowDestination"],
+      showPathVisualization: data["showPathVisualization"],
+      mapSize: data["mapSize"]
     });
   }
 
