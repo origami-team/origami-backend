@@ -273,6 +273,7 @@ io.on("connection", async (socket) => {
       initialRotation: data["initialRotation"],
       virEnvType: data["virEnvType"],
       avatarSpeed: data["avatarSpeed"],
+      disableAvatarRotation: data["disableAvatarRotation"],
       showEnvSettings: data["showEnvSettings"],
       initialAvatarHeight: data["initialAvatarHeight"],
       arrowDestination: data["arrowDestination"],
@@ -669,7 +670,7 @@ io.on("connection", async (socket) => {
       ? virEnvClientsData[virEnvMultiRoomName]
       : [];
 
-    /* identify current player using stored player no */
+    // Identify current player using stored player no
     if (socket[socket.id] && virEnvClients[socket[socket.id]["playerNo"]]) {
       currentPlayer = virEnvClients[socket[socket.id]["playerNo"]];
 
