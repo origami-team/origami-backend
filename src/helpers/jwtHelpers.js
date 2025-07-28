@@ -19,6 +19,8 @@ const {
   issuer: jwt_issuer,
   validity_ms: jwt_validity_ms,
 } = config.get("jwt");
+
+// refresh_token configuration
 const refresh_token_validity_ms = config.get("refresh_token.validity_ms");
 
 const jwtSignOptions = {
