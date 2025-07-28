@@ -3,6 +3,7 @@ log
 terraform
 db
 backup.sh
+backup_once.sh
 package-lock.json
 .vscode
 
