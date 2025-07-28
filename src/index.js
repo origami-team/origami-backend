@@ -123,7 +123,7 @@ var virEnvMultiRoomName = "multiVirRoom"; // ToDo: update is to be automatic
 
 io.on("connection", async (socket) => {
   // Print
-  // console.log("\n\n 🔌 Connection made successfully.");
+  console.log("\n\n 🔌 Connection made successfully.");
 
   /* Functions' declaration */
   /* socket.on('checkAbilityToJoinGame', (gameDetail, callback) */

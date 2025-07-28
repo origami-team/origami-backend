@@ -33,7 +33,10 @@ const getUserGames = async (req, res) => {
     await Promise.all(
       // Add tracksCount property
       userGames.map(async (game) => {
-        let gameTracks = await Track.find({ game: game._id });
+        let gameTracks = await Track.find({
+          game: game._id,
+          createdAt: { $gt: new Date("2022-07-22T00:00:00.000Z") }
+        });
         let tracksCount = gameTracks.length;
         if (tracksCount > 0) {
           gamesWithTracks.push({
